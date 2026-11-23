@@ -77,7 +77,11 @@ button.primary { background: var(--accent); border-color: var(--accent); color: 
 button.wide { align-self: stretch; text-align: left; }
 .seg { display: flex; flex-wrap: wrap; gap: 5px; }
 .seg.tight button { font-size: 12.5px; padding: 4px 8px; min-height: 28px; }
-.pats { display: flex; flex-direction: column; }
+.lib { display: flex; gap: 6px; }
+.lib select, .lib input { font: 13.5px var(--font-body); color: var(--ink); background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 4px 8px; height: 34px; min-width: 0; }
+.lib select { flex: 1 1 62%; font-weight: 700; } .lib input { flex: 1 1 38%; }
+.pats { display: flex; flex-direction: column; max-height: 34vh; overflow-y: auto; scrollbar-width: thin; }
+.pats .tag { margin-left: 8px; font: 500 10.5px var(--font-mono); color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
 .pats button { text-align: left; border: 0; border-left: 2px solid transparent; border-radius: 0; background: none; padding: 4px 8px; min-height: 28px; color: var(--muted); }
 .pats button:hover { color: var(--ink); }
 .pats button[aria-pressed="true"] { background: none; color: var(--ink); font-weight: 700; border-left-color: var(--focus); }
@@ -122,6 +126,8 @@ button.wide { align-self: stretch; text-align: left; }
 @media (max-width: 1000px) and (min-width: 700px) { .col { display: grid; grid-template-columns: 290px minmax(0, 1fr); gap: 24px; align-items: start; } .block + .block { border-top: 0; padding-top: 0; } }
 @media (min-width: 1500px) { .grid { grid-template-columns: minmax(0, 1fr) 430px; } }
 
+.toc { margin: 0 0 14px; }
+
 </style>
 </head>
 <body>
@@ -129,7 +135,7 @@ button.wide { align-self: stretch; text-align: left; }
   <header>
     <h1>EEG Simülatörü</h1>
     <div class="tabs" id="seg-mode" role="group" aria-label="Bölüm">
-      <button type="button" data-m="atlas">Atlas</button>
+      <button type="button" data-m="atlas">Kütüphane</button>
       <button type="button" data-m="lok">Lokalizasyon atölyesi</button>
       <button type="button" data-m="sinav">Beni sına</button>
       <button type="button" data-m="ref">Başvuru</button>
@@ -328,11 +334,108 @@ button.wide { align-self: stretch; text-align: left; }
         <li>Günlük patern indeksi: günlük yük × ortalama frekans (örneğin 5,2 saat × 1,5 Hz = 7,8 Hz-saat).</li>
       </ul>
 
+      <h2>Normal uyanıklık ve yaşa göre sınırlar</h2>
+      <div class="tablewrap"><table class="tb">
+        <tr><th>Öge</th><th>Olağan</th><th>Anlamlı sapma</th></tr>
+        <tr><td>Posterior baskın ritim, erişkin</td><td>8,5–13 Hz, oksipital, göz açmayla baskılanır</td><td>8,5 Hz altı; tek yanlı reaktivite kaybı (Bancaud); 1 Hz'i aşan taraf farkı</td></tr>
+        <tr><td>Posterior baskın ritim, çocuk</td><td>3–4 ay 3,5–4,5 Hz; 1 yaş 5–6; 3 yaş 8; 9 yaş 9; 15 yaş 10 Hz</td><td>Alt sınırlar: 1 yaş 5, 3 yaş 6, 5 yaş 7, 8 yaş 8 Hz</td></tr>
+        <tr><td>Alfa genlik asimetrisi</td><td>Sağ daha yüksek; %50'ye kadar</td><td>Sol %35'ten fazla yüksek ya da sağ %50'den fazla yüksek; düşük taraf anormal (istisna: kemik defekti)</td></tr>
+        <tr><td>Alfa varyantları</td><td>Yavaş (alfanın yarısı, 4–5 Hz, çentikli) ve hızlı (iki katı, 16–20 Hz); alfa gibi reaktif</td><td>Frekans tam kat değilse ya da reaktivite yoksa varyant değildir</td></tr>
+        <tr><td>Gençliğin posterior yavaş dalgaları</td><td>8–14 yaş; 2,5–4,5 Hz, alfayla kaynaşır, göz açınca kaybolur</td><td>Genlik alfanın 1,5 katını aşıyor, sürekli ya da tek tarafta sabit</td></tr>
+        <tr><td>Beta</td><td>Frontosantral, 20 µV altı; ilaçla artar (18–25 Hz, iğsi)</td><td>Tek yanlı azalma (kortikal hasar, subdural koleksiyon) ya da artma (kemik defekti)</td></tr>
+        <tr><td>Düşük voltajlı EEG</td><td>Erişkinde 20 µV altı, simetrik, uyku ögeleri normal</td><td>Çocukta; reaktivite ve uyku ögeleri yoksa; asimetrikse</td></tr>
+        <tr><td>Yaşlıda temporal teta</td><td>60 yaş üstü, seyrek, kısa, çoğu solda, zemin normal</td><td>Sürekli, polimorfik delta, eşlik eden baskılanma ya da keskin dalga</td></tr>
+      </table></div>
+
+      <h2>Uyku evreleri ve ögeleri</h2>
+      <div class="tablewrap"><table class="tb">
+        <tr><th>Evre</th><th>Zemin</th><th>Tanımlayan ögeler</th><th>Epilepsi açısından</th></tr>
+        <tr><td>N1</td><td>Alfa dağılır, 2–7 Hz düşük genlikli karışık aktivite</td><td>Yavaş göz hareketleri; sonuna doğru verteks dalgaları, POSTS</td><td>Deşarj aktivasyonu başlar; benign varyantların çoğu bu evrede</td></tr>
+        <tr><td>N2</td><td>Teta, düşük genlikli delta</td><td>İğcik (11–16 Hz, ≥0,5 s, santral) ve K kompleksi (≥0,5 s, frontosantral)</td><td>İnteriktal deşarj verimi en yüksek; frontal nöbetler bu evreden kalkar</td></tr>
+        <tr><td>N3</td><td>0,5–2 Hz, &gt;75 µV frontal delta, epoğun ≥%20'si</td><td>İğcik seyrek ve frontal; göz hareketi yok</td><td>Deşarjlar sık ve geniş alanlı; NREM parasomnileri bu evreden</td></tr>
+        <tr><td>REM</td><td>Düşük genlikli karışık frekans</td><td>Testere dişi dalgalar, hızlı göz hareketleri, kas atonisi</td><td>Deşarjlar en seyrek ve en fokal: lateralizasyon değeri yüksek</td></tr>
+      </table></div>
+      <ul>
+        <li><b>Anormal sayılanlar:</b> iğcik, verteks dalgası ya da K komplekslerinin süreğen tek yanlı azalması (aynı taraf lezyon); 2 yaşından sonra süreğen iğcik asenkronisi; uyku başlangıcında REM (not edilir, tek başına tanı koydurmaz); NREM'de diken-dalga indeksinin %50–85'i aşması (ESES); uykuda jeneralize paroksismal hızlı aktivite.</li>
+        <li><b>Uyanma (arousal):</b> en az 3 s süren ani frekans artışı, öncesinde en az 10 s uyku; evrim göstermez. Çocukta hipnagojik ve postarousal hipersenkroni (3–5 Hz, yüksek genlikli, frontosantral) olağandır.</li>
+        <li><b>NREM parasomnisi ve uykuyla ilişkili hipermotor nöbet:</b> parasomni N3'ten, gecenin ilk üçte birinde, gece başına bir-iki kez, uzun ve değişken; nöbet N2'den, gecenin her saatinde, kümeler halinde, kısa ve stereotipik. İktal skalp EEG'si normal ya da artefaktla örtülü olabilir.</li>
+      </ul>
+
+      <h2>Hiperventilasyon</h2>
+      <div class="tablewrap"><table class="tb">
+        <tr><th>Bulgu</th><th>Özellik</th><th>Yorum</th></tr>
+        <tr><td>Hipersenkron yavaşlama</td><td>İki yanlı, senkron teta sonra delta (1,5–4 Hz); erişkinde frontal, çocukta posterior başlangıç ve çok yüksek genlik; HV bitince 1 dakika içinde çözülür</td><td>Normal, derecesi ne olursa olsun; en belirgin 8–12 yaşta; düşük kan şekeri artırır</td></tr>
+        <tr><td>Uzamış yavaşlama</td><td>HV bitiminden 90 saniye sonra hâlâ sürüyor</td><td>Anormal; hipoglisemi, süren derin solunum, serebrovasküler rezerv azlığı</td></tr>
+        <tr><td>Yeniden ortaya çıkış (re-build-up)</td><td>Çözüldükten 20–60 s sonra daha yavaş, düzensiz delta; dakikalarca sürer</td><td>Moyamoya için karakteristik; bilinen olguda HV yaptırılmaz</td></tr>
+        <tr><td>Asimetrik yanıt, fokal yavaşlama</td><td>Kayıt boyunca aynı yönde asimetri; HV sonrası süren fokal delta</td><td>Fazla yavaşlayan tarafta hipoperfüzyon ya da az yavaşlayan tarafta bozuk vazoreaktivite: bazal kayıtla karar verilir</td></tr>
+        <tr><td>3 Hz diken-dalga, absans</td><td>Ani başlangıç ve bitiş, diken her komplekste sabit yerde</td><td>Tedavisiz çocukluk çağı absans epilepsisinde hemen her hastada</td></tr>
+        <tr><td>Çentikli hipersenkroni, yalancı absans</td><td>Kademeli başlangıç, çentik yeri değişken, diken yok; yanıtsızlık eşlik edebilir</td><td>Epileptik değil</td></tr>
+      </table></div>
+      <p class="note">Uygulama: 3–5 dakika, dakikada 15–20 derin solunum; ardından en az 1, tercihen 3 dakika kayıt. Kontrendikasyonlar: yakın zamanlı inme ya da intrakraniyal kanama, ciddi kardiyak ya da pulmoner hastalık, büyük damar darlığı, moyamoya, orak hücre hastalığı ya da taşıyıcılığı; gebelikte dikkat.</p>
+
+      <h2>Aralıklı fotik stimülasyon</h2>
+      <div class="tablewrap"><table class="tb">
+        <tr><th>Yanıt</th><th>Flaştan sonra</th><th>Yer</th><th>Uyaranla ilişki</th><th>Anlam</th></tr>
+        <tr><td>Fotoelektrik artefakt</td><td>0 ms</td><td>Tek elektrot (çoğu Fp)</td><td>Her frekansta, sabit genlik; elektrot örtülünce kaybolur</td><td>Yüksek empedans</td></tr>
+        <tr><td>Elektroretinogram</td><td>~20–50 ms</td><td>Fp1 ve Fp2, düşük genlik</td><td>Elektrot örtülünce sürer, göz örtülünce kaybolur; hızlı flaşta yorulur</td><td>Normal</td></tr>
+        <tr><td>Fotomiyojenik yanıt</td><td>50–60 ms</td><td>Frontopolar, periorbital</td><td>Bire bir kilitli, dizi içinde büyür, son flaşla biter; göz açınca kaybolur</td><td>Kas kaynaklı, epileptik değil</td></tr>
+        <tr><td>Fotik sürüklenme</td><td>80–150 ms</td><td>Oksipital, iki yanlı</td><td>Aynı frekans, harmonik ya da subharmonik; alfa frekansına yakın uyaranda en yüksek; son flaşla biter</td><td>Normal; yokluğu da normal. Tek yanlı kayıp o tarafta lezyon</td></tr>
+        <tr><td>Düşük frekanslı uyarana oksipital dikenler</td><td>~100 ms</td><td>Oksipital, yüksek genlik</td><td>1–3 Hz flaşın her birine</td><td>CLN2, progresif miyoklonik epilepsiler, mitokondriyal ve prion hastalığı</td></tr>
+        <tr><td>Fotoparoksizmal yanıt</td><td>Kilitli değil</td><td>Posterior (tip 1–2), frontale yayılan (3) ya da jeneralize (4)</td><td>Frekansı flaştan düşük ve kat ilişkisi yok; uyaranı aşabilir</td><td>Genetik jeneralize epilepsiler (en çok JME); sağlıklı kişide de görülebilir</td></tr>
+      </table></div>
+      <p class="note">Waltz sınıflaması: 1 oksipital ritim içinde dikenler; 2 pariyeto-oksipital dikenler ve bifazik yavaş dalga; 3 bunun frontale yayılması; 4 jeneralize diken-dalga ya da çoklu diken-dalga. Jeneralize boşalım görülünce stimülasyon durdurulur ve o frekans tekrarlanmaz. En etkili aralık 15–20 Hz; göz kapama anı en duyarlı andır.</p>
+
+      <h2>Artefaktlar</h2>
+      <div class="tablewrap"><table class="tb">
+        <tr><th>Artefakt</th><th>Görünüm</th><th>Ele veren</th><th>Karıştığı bulgu</th></tr>
+        <tr><td>Göz kırpma, kapak titreşimi</td><td>Fp pozitif, dik düşüşlü; 5–10 Hz ritmik</td><td>Alan F'den öteye geçmez</td><td>Frontal delta, FIRDA, frontal diken-dalga</td></tr>
+        <tr><td>Yatay göz hareketi, lateral rektus</td><td>F7 ve F8 ters fazlı; başında tek elektrotlu sivri potansiyel</td><td>İki tarafta zıt polarite</td><td>Anterior temporal diken, temporal teta</td></tr>
+        <tr><td>Kas</td><td>20 ms altı, düzensiz, temporal ve frontopolar</td><td>Verteks temiz; gevşemeyle değişir</td><td>Beta, diken, tonik nöbet başlangıcı</td></tr>
+        <tr><td>Glossokinetik</td><td>Yaygın frontotemporal delta patlamaları</td><td>'La la la' ile yeniden üretilir</td><td>FIRDA, frontotemporal yavaşlama</td></tr>
+        <tr><td>EKG</td><td>Düzenli sivri potansiyel, sol-sağ zıt polarite, kulak referansında yaygın</td><td>EKG kanalıyla eşzamanlı</td><td>Periyodik keskin dalga, PLED</td></tr>
+        <tr><td>Nabız</td><td>Tek elektrotta yumuşak yavaş dalga</td><td>QRS'ten 200–300 ms sonra, sabit gecikme</td><td>Fokal delta</td></tr>
+        <tr><td>Ter</td><td>0,5 Hz altı salınım, kanaldan kanala bağımsız</td><td>LFF 1 Hz ile azalır</td><td>Delta</td></tr>
+        <tr><td>50 Hz, elektrot 'pop'</td><td>Tek elektrotta kalın düzenli bant; dik çıkış, üstel dönüş</td><td>Alan yok; empedans yüksek</td><td>Hızlı ritim, diken</td></tr>
+        <tr><td>Ritmik hareket (tremor, sırta vurma)</td><td>4–6 Hz monoritmik ya da temposu değişen ritmik aktivite</td><td>Fizyolojik alan yok; hareketle başlar ve biter</td><td>Elektrografik nöbet</td></tr>
+        <tr><td>Tuz köprüsü</td><td>Tek bipolar kanal sürekli düz</td><td>Referansta iki elektrot aynı trase</td><td>Fokal baskılanma</td></tr>
+      </table></div>
+
+      <h2>Jeneralize epileptiform paternler</h2>
+      <div class="tablewrap"><table class="tb">
+        <tr><th>Patern</th><th>Frekans, biçim</th><th>Zemin</th><th>Aktive eden</th><th>Bağlam</th></tr>
+        <tr><td>3 Hz diken-dalga</td><td>3,5–4 Hz başlar, 2,5 Hz biter; düzenli, ani başlangıç-bitiş</td><td>Normal</td><td>HV, uyku yoksunluğu</td><td>Çocukluk ve juvenil absans epilepsisi</td></tr>
+        <tr><td>Çoklu diken-dalga</td><td>4–6 Hz, kısa, düzensiz</td><td>Normal</td><td>Uyanma, uyku yoksunluğu, fotik</td><td>Juvenil miyoklonik epilepsi; miyokloni çoklu dikenle eşzamanlı</td></tr>
+        <tr><td>Yavaş diken-dalga</td><td>1,5–2,5 Hz, düzensiz, uzun diziler</td><td>Yavaş</td><td>Uyuklama, NREM</td><td>Lennox-Gastaut; atipik absans</td></tr>
+        <tr><td>Jeneralize paroksismal hızlı aktivite</td><td>10–25 Hz, frontal, saniyeler</td><td>Yavaş</td><td>NREM</td><td>Lennox-Gastaut; uzun olanlar tonik nöbet</td></tr>
+        <tr><td>Hipsaritmi</td><td>&gt;300 µV kaotik yavaş dalga, multifokal dikenler; spazmda elektrodekrement</td><td>Yok</td><td>NREM'de parçalanır</td><td>İnfantil epileptik spazm sendromu</td></tr>
+        <tr><td>Göz kapama duyarlılığı</td><td>Göz kapamadan sonraki 2–4 s içinde 3–6 Hz boşalım</td><td>Normal</td><td>Aydınlıkta göz kapama, fotik</td><td>Göz kapağı miyoklonili epilepsi</td></tr>
+        <tr><td>Fragmanlar</td><td>Bir-iki kompleks, taraf değiştiren</td><td>Normal</td><td>Uyuklama, uyku</td><td>Jeneralize epilepside olağan; fokal sanılır</td></tr>
+        <tr><td>Absans status</td><td>Süreğen 2,5–3,5 Hz, dalgalanan</td><td>—</td><td>İlaç kesilmesi, uygunsuz ilaç</td><td>IV benzodiazepinle EEG ve klinik birlikte düzelir</td></tr>
+      </table></div>
+
+      <h2>Yavaşlama ve koma paternleri</h2>
+      <div class="tablewrap"><table class="tb">
+        <tr><th>Patern</th><th>Görünüm</th><th>Anlam</th></tr>
+        <tr><td>Fokal polimorfik delta</td><td>Sürekli, düzensiz, reaktif olmayan fokal delta; hızlı aktivite azalmış</td><td>O bölgede yapısal lezyon (ak madde tutulumu)</td></tr>
+        <tr><td>FIRDA</td><td>2–3 Hz frontal ritmik delta dizileri, reaktif</td><td>Özgül değil: yaygın ensefalopati, daha seyrek derin orta hat lezyonu</td></tr>
+        <tr><td>OIRDA</td><td>Çocukta 2–4 Hz oksipital ritmik delta, göz açınca baskılanır</td><td>Jeneralize epilepsi (absans) ile ilişkili</td></tr>
+        <tr><td>TIRDA</td><td>Anterior temporal 1–4 Hz ritmik delta, 4–20 s</td><td>Temporal lob epilepsisi için diken kadar özgül</td></tr>
+        <tr><td>Yaygın yavaşlama</td><td>Hafif: zemin &lt;8,5 Hz; orta: teta-delta; ağır: sürekli delta ya da baskılanma</td><td>Ensefalopatinin derecesi; nedeni göstermez</td></tr>
+        <tr><td>Bancaud fenomeni</td><td>Göz açınca alfa bir tarafta baskılanmıyor</td><td>Baskılanmayan tarafta lezyon</td></tr>
+        <tr><td>Alfa koma</td><td>Yaygın, frontal baskın, monoton, reaktif değil (hipoksik); posterior ve reaktif (pons); frontal ve reaktif (ilaç)</td><td>Prognozu neden ve reaktivite belirler</td></tr>
+        <tr><td>Beta koma</td><td>Yaygın 12–16 Hz, altında delta</td><td>Sedatif-hipnotik zehirlenmesi; geri dönüşlü</td></tr>
+        <tr><td>İğcik koma</td><td>N2 benzeri trase, hasta uyandırılamıyor</td><td>Pontomezensefalik işlev bozukluğu; reaktifse görece iyi</td></tr>
+        <tr><td>Elektroserebral inaktivite</td><td>2 µV üstü serebral aktivite yok; teknik koşullar tam</td><td>Beyin ölümünde destekleyici; ilaç ve hipotermi dışlanmalı</td></tr>
+      </table></div>
+
       <h2>Bu simülatör ne yapar, ne yapmaz</h2>
       <ul>
         <li>Her kaynak tek bir eşdeğer dipoldür; alan, homojen küre yaklaşımıyla 21 elektrota hesaplanır. Derinlik yalnız alanın genişliğini ayarlar. Gerçek kafa modeli (kafatası iletkenliği, kıvrımlı korteks) yoktur.</li>
         <li>Zemin, uyku ögeleri ve artefaktlar istatistiksel üreteçlerdir. Dalga biçimleri şematiktir; gerçek kayıtlardaki çeşitlilik daha fazladır.</li>
         <li>İktal sahneler tipik birer örnektir: süreler, frekanslar ve yayılım zamanları benim seçtiğim değerlerdir.</li>
+        <li>Uyku, hiperventilasyon, fotik, artefakt, jeneralize ve koma sahneleri de aynı biçimde üretilir: flaşa yanıt gecikmeleri, yavaşlamanın süresi, boşalım frekansları kaynaklardaki aralıkların içinden seçilmiş tek değerlerdir. Fotik diziler gerçek protokoldeki 10 saniye yerine 8–9 saniyedir.</li>
+        <li>EKG, EOG, çene EMG'si ve solunum kanalı yoktur; EKG ve göz artefaktları yalnız EEG kanallarındaki görünümleriyle verilir. Çentik filtre ve çift aralıklı montaj yoktur.</li>
+        <li>Yenidoğan EEG'si kapsam dışıdır.</li>
         <li>Lokalizasyon çözümü deşarjın zeminden arındırılmış alanından hesaplanır; trasede zemin gürültüsü küçük kanalların yönünü değiştirebilir.</li>
       </ul>
 
@@ -340,6 +443,7 @@ button.wide { align-self: stretch; text-align: left; }
       <ul>
         <li>Ebersole JS, Husain AM, Nordli DR. Current Practice of Clinical Electroencephalography, 4. baskı, 2014: kortikal jeneratörler ve voltaj alanları, voltaj topografisi ve dipol modelleme, normal erişkin EEG ve varyantlar, erişkin epilepsisinde EEG bölümleri.</li>
         <li>Stern JM. Atlas of EEG Patterns; Misulis KE. Atlas of EEG, Seizure Semiology, and Management.</li>
+        <li>Uyku, aktivasyon, normal bulgular ve koma bölümleri: Ebersole (normal erişkin EEG, normal pediatrik EEG, fokal ensefalopatiler, erişkin epilepsisinde EEG bölümleri) ve Stern (hipersenkron yavaşlama, fotik stimülasyon yanıtları, artefaktlar bölümleri) okunarak yazıldı. AASM uyku evreleme ölçütleri, Waltz fotoparoksizmal yanıt sınıflaması, ESES diken-dalga indeksi eşikleri, ACNS elektroserebral inaktivite teknik koşulları ve yaşa göre posterior ritim sınırları bu kitaplarda geçmediği ölçüde genel bilgimden yazıldı ve kaynakla karşılaştırılmadı.</li>
         <li>Bölüm seminerleri: ensefalopati, ensefalit ve periyodik paternler sunumları; "EEG Sem 1–5".</li>
         <li>Kural MA ve ark. Neurology 2020;94:e2139; Clin Neurophysiol 2020;131:2250.</li>
         <li>Hirsch LJ ve ark. American Clinical Neurophysiology Society's Standardized Critical Care EEG Terminology: 2021 Version. J Clin Neurophysiol 2021;38:1–29 (tamamı okundu; "Yoğun bakım EEG'si" sahneleri, adlandırma alıştırması ve yukarıdaki tablolar buna dayanır).</li>
@@ -454,7 +558,8 @@ button.wide { align-self: stretch; text-align: left; }
     sw: function (p) { return knotAt([[0, 0], [0.07, -1], [0.16, 0.3], [0.56, -0.78], [1, 0]], p) + 0.18; },
     sharp: function (p) { return knotAt([[0, 0.25], [0.2, -1], [0.5, 0.45], [1, 0.25]], p); },
     psw: function (p) { return knotAt([[0, 0], [0.05, -0.9], [0.1, 0.25], [0.15, -1], [0.2, 0.3], [0.25, -0.8], [0.33, 0.3], [0.65, -0.7], [1, 0]], p) + 0.15; },
-    pos: function (p) { return -1.386 * (Math.pow(Math.abs(Math.sin(Math.PI * p)), 0.55) - 0.72); }           // arciform with positive cusps (14 and 6 Hz)
+    pos: function (p) { return -1.386 * (Math.pow(Math.abs(Math.sin(Math.PI * p)), 0.55) - 0.72); },          // arciform with positive cusps (14 and 6 Hz)
+    saw: function (p) { return knotAt([[0, 0.55], [0.72, -1], [1, 0.55]], p) + 0.1; }                         // slow rise, fast fall: sawtooth waves of REM
   };
   // Rhythm with time-varying frequency, amplitude and morphology. f, amp, k may be numbers or functions of time (s).
   function rhythm(o, rng) {
@@ -475,7 +580,7 @@ button.wide { align-self: stretch; text-align: left; }
 
   // ---------- a recording
   function Rec(dur, seed, state) {
-    var n = Math.round(dur * FS), r = { dur: dur, n: n, rng: RNG(seed), state: state || "ec", bg: [], ev: [], att: null, ch: [], marks: [], src: [], truth: {} }, i;
+    var n = Math.round(dur * FS), r = { dur: dur, n: n, rng: RNG(seed), state: state || "ec", bg: [], ev: [], att: null, ch: [], marks: [], src: [], truth: {}, notes: [], stim: [] }, i;
     for (i = 0; i < NEL; i++) { r.bg.push(new Float32Array(n)); r.ev.push(new Float32Array(n)); }
     return r;
   }
@@ -486,6 +591,9 @@ button.wide { align-self: stretch; text-align: left; }
   }
   function add(rec, g, w, t0, scale) { addTo(rec.ev, g, w, t0, scale); }
   function mark(rec, t0, t1, label, kind) { rec.marks.push({ t0: t0, t1: t1, label: label, kind: kind || "ev" }); }
+  // Technologist's annotations (always shown, also in the quiz) and the photic stimulator channel.
+  function note(rec, t, label) { rec.notes.push({ t: t, label: label }); }
+  function flashes(rec, t0, dur, f) { var a = [], k, n = Math.floor(dur * f + 1e-6); for (k = 0; k < n; k++) a.push(t0 + k / f); rec.stim.push({ t0: t0, t1: t0 + dur, f: f, fl: a }); return a; }
   // Background attenuation: weight per electrode (0..1) times a time envelope (function of s -> remaining fraction).
   function attenuate(rec, w, envFn) {
     var e, i, f, a;
@@ -502,21 +610,22 @@ button.wide { align-self: stretch; text-align: left; }
   var BG_GAIN = BG_POS.map(function (p) { return gain(p, 0.5); });
   function regionW(p, st) {                                 // posterior-dominant awake, frontocentral-dominant slow activity asleep
     var ap = p[1];
-    if (st === "n2") return 1.0 + 0.25 * ap;
+    if (st === "n2" || st === "n3") return 1.0 + 0.25 * ap;
     return 0.95 - 0.3 * ap;
   }
-  // Ongoing activity for the state: ec = awake eyes closed, eo = eyes open, dr = drowsy, n2 = stage N2 sleep.
+  // Ongoing activity for the state: ec = awake eyes closed, eo = eyes open, dr = drowsy, n2 / n3 = NREM sleep, rem = REM sleep.
   // opt: { alpha: Hz, alphaAmp, noBlink, blinks: [times], eyes: [[tOpen, tClose]...], spindles: bool, vertex: bool, level: overall scale }
   function background(rec, opt) {
     if (rec.hasBg) return rec; rec.hasBg = true;             // a second pattern layered onto the same record keeps the first one's background
     opt = opt || {}; var rng = rec.rng, n = rec.n, st = rec.state, lvl = opt.level || 1, i, k, w, t;
-    var base = { ec: 6, eo: 5.5, dr: 7, n2: 8 }[st], low = { ec: null, eo: null, dr: [1.1, 0.8, 0.28, 0.12], n2: [1.3, 0.8, 0.2, 0.08] }[st];
+    var base = { ec: 6, eo: 5.5, dr: 7, n2: 8, n3: 9, rem: 5.2 }[st], low = { ec: null, eo: null, dr: [1.1, 0.8, 0.28, 0.12], n2: [1.3, 0.8, 0.2, 0.08], n3: [1.5, 0.6, 0.12, 0.05], rem: [0.8, 0.9, 0.3, 0.12] }[st];
     BG_POS.forEach(function (p, j) { addTo(rec.bg, BG_GAIN[j], pink(n, rng, low), 0, base * lvl * regionW(p, st)); });
     for (k = 0; k < NEL; k++) { w = rec.bg[k]; for (i = 0; i < n; i++) w[i] += 0.7 * rng.n(); }
     // beta, frontocentral
     ["F3", "F4", "C3", "C4", "Fz"].forEach(function (nm) { addTo(rec.bg, gain(dir(nm), 0.5), reson(n, rng, rng.r(17, 23), 4), 0, (st === "dr" ? 3.5 : 2.4) * lvl); });
     // posterior dominant rhythm with eye opening reactivity
-    var aAmp = (opt.alphaAmp == null ? 17 : opt.alphaAmp) * { ec: 1, eo: 0.12, dr: 0.3, n2: 0 }[st], fa = opt.alpha || rng.r(9.3, 10.6);
+    var aAmp = (opt.alphaAmp == null ? 17 : opt.alphaAmp) * { ec: 1, eo: 0.12, dr: 0.3, n2: 0, n3: 0, rem: 0.14 }[st], fa = opt.alpha || rng.r(9.3, 10.6); if (st === "rem") fa -= 1.3;
+    rec.alphaF = fa;
     if (aAmp > 0) {
       var env = new Float32Array(n); for (i = 0; i < n; i++) env[i] = 1;
       (opt.eyes || []).forEach(function (iv) { for (i = Math.max(0, Math.round(iv[0] * FS)); i < Math.min(n, Math.round(iv[1] * FS) + FS); i++) { t = i / FS; env[i] *= 1 - 0.9 * ramp(t, iv[0], iv[0] + 0.4) * (1 - ramp(t, iv[1], iv[1] + 0.8)); } });
@@ -530,6 +639,12 @@ button.wide { align-self: stretch; text-align: left; }
       if (opt.spindles !== false) { t = rng.r(1, 3); while (t < rec.dur - 1.6) { spindle(rec, t, rng.r(0.7, 1.4)); t += rng.r(3.5, 7); } }
       if (opt.vertex !== false) { t = rng.r(2, 5); while (t < rec.dur - 1.5) { if (rng.u() < 0.3) kcomplex(rec, t); else vertex(rec, t, rng.r(90, 150)); t += rng.r(4, 9); } }
     }
+    if (st === "n3") {                                       // high-voltage 0.5-2 Hz delta, frontally dominant, partly synchronous between regions
+      var dd = white(n, rng), dA = opt.delta == null ? 30 : opt.delta;
+      [["Fz", 1], ["F3", 0.95], ["F4", 0.95], ["Fp1", 0.8], ["Fp2", 0.8], ["Cz", 0.85], ["C3", 0.75], ["C4", 0.75], ["Pz", 0.5], ["P3", 0.5], ["P4", 0.5], ["T3", 0.4], ["T4", 0.4], ["O1", 0.32], ["O2", 0.32]].forEach(function (s) { addTo(rec.bg, gain(dir(s[0]), 0.45), reson(n, rng, rng.r(0.75, 1.5), 1.1, dd, 0.62), 0, dA * s[1] * lvl); });
+      if (opt.spindles !== false) { t = rng.r(3, 7); while (t < rec.dur - 1.6) { spindle(rec, t, rng.r(0.6, 1), 0.55, 11.6); t += rng.r(8, 15); } }
+    }
+    if (st === "rem") ["Cz", "C3", "C4", "Fz", "Pz"].forEach(function (nm) { addTo(rec.bg, gain(dir(nm), 0.5), reson(n, rng, rng.r(4.5, 6.5), 2.2), 0, 4.5 * lvl); });
     // blinks (awake only)
     if ((st === "ec" || st === "eo") && !opt.noBlink) {
       var bl = opt.blinks; if (!bl) { bl = []; t = rng.r(1.5, 4); while (t < rec.dur - 1) { bl.push(t); t += st === "eo" ? rng.r(2.5, 5) : rng.r(6, 12); } }
@@ -545,9 +660,11 @@ button.wide { align-self: stretch; text-align: left; }
     addTo(rec.ev, g, knots([[0, 0], [0.05, 1], [0.5, 0.75], [1.1, 0]], amp), t);
     addTo(rec.ev, oneHot(left ? "F7" : "F8"), knots([[0, 0], [0.008, -1], [0.02, 0.2], [0.035, 0]], amp * 0.45), t - 0.005);
   }
-  function spindle(rec, t, dur) {
-    var n = Math.round(dur * FS), w = mul(reson(n, rec.rng, rec.rng.r(12.5, 14.2), 1.2), hann(n));
-    [["Cz", 1], ["C3", 0.8], ["C4", 0.8], ["Fz", 0.55], ["Pz", 0.5]].forEach(function (s) { addTo(rec.ev, gain(dir(s[0]), 0.5), w, t, 22 * s[1]); });
+  // Sleep spindle. scale: overall size; f: centre frequency (slower and more frontal in deeper sleep); wL / wR: weight of each hemisphere.
+  function spindle(rec, t, dur, scale, f, wL, wR) {
+    var n = Math.round(dur * FS), w = mul(reson(n, rec.rng, f ? f * rec.rng.r(0.97, 1.03) : rec.rng.r(12.5, 14.2), 1.2), hann(n)), fr = f && f < 12.2;
+    scale = scale == null ? 1 : scale; wL = wL == null ? 1 : wL; wR = wR == null ? 1 : wR;
+    [["Cz", fr ? 0.7 : 1, 0], ["C3", 0.8, -1], ["C4", 0.8, 1], ["Fz", fr ? 1 : 0.55, 0], ["F3", fr ? 0.7 : 0.25, -1], ["F4", fr ? 0.7 : 0.25, 1], ["Pz", 0.5, 0]].forEach(function (s) { addTo(rec.ev, gain(dir(s[0]), 0.5), w, t, 22 * scale * s[1] * (s[2] < 0 ? wL : s[2] > 0 ? wR : 0.5 * (wL + wR))); });
   }
   function vertex(rec, t, amp) { addTo(rec.ev, gain(dir("Cz"), 0.36), knots([[0, 0], [0.03, 0.1], [0.1, -1], [0.2, 0.3], [0.34, 0]], amp), t); }
   function kcomplex(rec, t) { addTo(rec.ev, gain(dir("Fz", "Cz"), 0.3), knots([[0, 0], [0.16, -1], [0.5, 0.7], [0.95, 0]], rec.rng.r(140, 200)), t); spindle(rec, t + 0.75, rec.rng.r(0.6, 1)); }
@@ -622,10 +739,10 @@ button.wide { align-self: stretch; text-align: left; }
   }
   function spk(rng, a0, a1, d, slow, extra) { return function () { var o = { amp: rng.r(a0, a1), dur: d * rng.r(0.9, 1.12), slow: slow == null ? 0.55 : slow * rng.r(0.85, 1.15), slowDur: rng.r(0.26, 0.34) }, k; for (k in (extra || {})) o[k] = extra[k]; return spikeTpl(o); }; }
   var POS = {
-    basal: function (R) { return { d: unit(mv([-0.8, 0.3, -0.3], R)), r: 0.38, ori: mv([-0.6, 0.5, -0.6], R) }; },          // inferolateral/basal temporal, oblique (type 1)
-    lat: function (R) { return { d: mv(dir("T3", "T5", 0.62), R), r: 0.45, ori: null }; },                                   // lateral temporal convexity, radial (type 2)
+    basal: function (R, k) { var v = [[[-0.8, 0.3, -0.3], [-0.6, 0.5, -0.6]], [[-0.84, 0.12, -0.32], [-0.7, 0.3, -0.6]], [[-0.7, 0.5, -0.3], [-0.45, 0.7, -0.55]]][k || 0]; return { d: unit(mv(v[0], R)), r: 0.38, ori: mv(v[1], R) }; },   // 0 anterior-inferior, 1 mid-inferior (ear maximal), 2 temporal tip (frontopolar spread)          // inferolateral/basal temporal, oblique (type 1)
+    lat: function (R, w) { return { d: mv(dir("T3", "T5", w == null ? 0.62 : w), R), r: 0.45, ori: null }; },                                   // lateral temporal convexity, radial (type 2)
     rol: function (R) { return { d: mv(sph(55, -60), R), r: 0.5, ori: mv([-0.7, -0.6, -0.05], R) }; },                      // lower rolandic, tangential
-    mesFr: function (R) { return { d: mv(sph(4, -90), R), r: 0.55, ori: mv([1, 0.05, 0.12], R) }; }                           // interhemispheric paracentral: negative pole over the other side
+    mesFr: function (R, y) { return { d: unit(mv([-0.07, y || 0, 1], R)), r: 0.55, ori: mv([1, 0.05, 0.12], R) }; }                           // interhemispheric paracentral: negative pole over the other side
   };
   function src(rec, pos, label) { return mkSrc(rec, pos.d, pos.r, pos.ori, label); }
 
@@ -634,16 +751,16 @@ button.wide { align-self: stretch; text-align: left; }
 
   // ----- A. Lokalizasyon dersleri
   S({ id: "l1", grp: "lok", ad: "1 Radyal kaynak, elektrot altında", st: "ec", dur: 30, mont: "lb",
-    build: function (rec, R, rng) { background(rec, { noBlink: true, alphaAmp: 11 }); var g = mkSrc(rec, mv(dir("T3"), R), 0.42, null, "radyal"); ieds(rec, g, evTimes(rec, 3.5, 6), spk(rng, 95, 120, 0.065, 0.55), "diken-dalga"); rec.truth.max = mir("T3", R); },
+    build: function (rec, R, rng) { background(rec, { noBlink: true, alphaAmp: 11 }); var e0 = rng.pick(["F7", "T3", "T5", "F3", "C3", "P3"]), g = mkSrc(rec, mv(dir(e0), R), 0.42, null, "radyal"); ieds(rec, g, evTimes(rec, 3.5, 6), spk(rng, 95, 120, 0.065, 0.55), "diken-dalga"); rec.truth.max = mir(e0, R); },
     oz: ["Konveksite korteksinden kalkan radyal alan: negatif maksimum kaynağın tam üstünde, alan komşu elektrotlara simetrik düşer.",
-      "Çift muzda temporal zincirde iki komşu kanal birbirine bakar (negatif faz karşılaşması): ortak elektrot maksimumdur. Parasagittal zincirde aynı deşarj küçük ve faz karşılaşmasız görünür; bu alanın kenarıdır.",
+      "Çift muzda maksimum elektrotun bulunduğu zincirde iki komşu kanal birbirine bakar (negatif faz karşılaşması): ortak elektrot maksimumdur. Komşu zincirde aynı deşarj küçük ve faz karşılaşmasız görünür; bu alanın kenarıdır.",
       "Ortalama referansta en yüksek genlik aynı elektrottadır. İki montajın aynı elektrotu göstermesi lokalizasyonu doğrular."],
     ipucu: ["Önce referans montajda genlik sıralaması, sonra bipolar montajda gradyan: ikisi çelişiyorsa referans kontamine ya da alan tanjansiyeldir.", "Transvers montajda koronal zincirde ikinci bir faz karşılaşması aramak, maksimumu iki eksende sabitler."],
     tuzak: ["Faz karşılaşması kaynağı değil, o zincir üzerindeki potansiyel maksimumunu gösterir. Kaynak ancak alan radyalse onun altındadır."] });
 
   S({ id: "l2", grp: "lok", ad: "2 İki elektrot arası: izoelektrik kanal", st: "ec", dur: 30, mont: "lb",
-    build: function (rec, R, rng) { background(rec, { noBlink: true, alphaAmp: 11 }); var g = mkSrc(rec, mv(dir("F7", "T3", 0.5), R), 0.42, null, "radyal"); ieds(rec, g, evTimes(rec, 3.5, 6), spk(rng, 95, 120, 0.065, 0.55), "diken-dalga"); rec.truth.max = mir("F7", R); rec.truth.max2 = mir("T3", R); },
-    oz: ["Maksimum iki elektrotun ortasında: ikisi eşpotansiyel olduğu için aralarındaki kanal (F7–T3) düz kalır, iki yanındaki kanallar birbirine bakar.",
+    build: function (rec, R, rng) { background(rec, { noBlink: true, alphaAmp: 11 }); var pr = rng.pick([["F7", "T3"], ["T3", "T5"], ["F3", "C3"], ["C3", "P3"]]), g = mkSrc(rec, mv(dir(pr[0], pr[1], 0.5), R), 0.42, null, "radyal"); ieds(rec, g, evTimes(rec, 3.5, 6), spk(rng, 95, 120, 0.065, 0.55), "diken-dalga"); rec.truth.max = mir(pr[0], R); rec.truth.max2 = mir(pr[1], R); },
+    oz: ["Maksimum iki elektrotun ortasında: ikisi eşpotansiyel olduğu için aralarındaki kanal düz kalır, iki yanındaki kanallar birbirine bakar.",
       "Düz kanal 'aktivite yok' demek değildir; referans montajda iki elektrotun da en yüksek genlikte olduğu görülür.",
       "Aynı görüntü, alan geniş ve gradyan düşük olduğunda da oluşur (derin ya da yaygın kaynak)."],
     ipucu: ["Faz karşılaşması bir kanal atlayarak oluşuyorsa maksimumu aradaki iki elektrota birlikte verin."],
@@ -658,14 +775,14 @@ button.wide { align-self: stretch; text-align: left; }
     tuzak: ["Oksipital uçta aynı yönlü sapma lambda ve POSTS ile karışır: onlar pozitiftir, P3–O1 ve T5–O1 kanallarını aşağı saptırır."] });
 
   S({ id: "l4", grp: "lok", ad: "4 Orta hat kaynağı", st: "ec", dur: 30, mont: "lb",
-    build: function (rec, R, rng) { background(rec, { noBlink: true, alphaAmp: 11 }); var g = mkSrc(rec, dir("Cz"), 0.4, null, "radyal"); ieds(rec, g, evTimes(rec, 3.5, 6), spk(rng, 85, 110, 0.06, 0.6), "diken-dalga"); rec.truth.max = "Cz"; },
-    oz: ["Verteks kaynağı parasagittal zincirlerde iki yanlı, simetrik ve düşük genlikli görünür (C3 ve C4 alanın kenarında); asıl faz karşılaşması Fz–Cz / Cz–Pz zincirindedir.",
-      "Transvers montajda C3–Cz ve Cz–C4 birbirine bakar. Orta hat zinciri olmayan montajda bu deşarj 'bisantral, senkron' diye yanlış okunur.",
-      "Cz referans montajda tüm kanallarda ters polariteli aynı dalga belirir: aktif referans."],
+    build: function (rec, R, rng) { background(rec, { noBlink: true, alphaAmp: 11 }); var e0 = rng.pick(["Cz", "Cz", "Fz", "Pz"]), g = mkSrc(rec, dir(e0), 0.4, null, "radyal"); ieds(rec, g, evTimes(rec, 3.5, 6), spk(rng, 85, 110, 0.06, 0.6), "diken-dalga"); rec.truth.max = e0; },
+    oz: ["Orta hat kaynağı (bu derste Fz, Cz ya da Pz) parasagittal zincirlerde iki yanlı, simetrik ve düşük genlikli görünür: iki yandaki elektrotlar alanın kenarındadır. Kaynak Cz'de ise asıl faz karşılaşması Fz–Cz / Cz–Pz zincirindedir.",
+      "Kaynak Fz ya da Pz'de ise orta hat zincirinin ucundadır: faz karşılaşması olmaz, tek kanal sapar. Transvers montajda orta hat elektrotunun iki yanındaki kanallar birbirine bakar (F3–Fz ile Fz–F4, C3–Cz ile Cz–C4, P3–Pz ile Pz–P4).",
+      "Orta hat zinciri olmayan montajda bu deşarj 'iki yanlı, senkron' diye yanlış okunur. Cz kaynağında Cz referans montaj tüm kanallarda ters polariteli aynı dalgayı gösterir: aktif referans."],
     ipucu: ["İki yanlı simetrik santral deşarj gördüğünüzde ilk iş orta hat zincirine ve transvers montaja bakmak."],
     tuzak: ["Uykuda verteks keskin dalgası aynı alanı paylaşır; ayrım morfoloji, ardından gelen yavaş dalga ve uyanıklıkta/REM'de sürmesiyle yapılır (bkz. orta hat dikenleri)."] });
 
-  S({ id: "l5", grp: "lok", ad: "5 Tanjansiyel dipol: iki kutup", st: "ec", dur: 30, mont: "av",
+  S({ id: "l5", grp: "lok", ad: "5 Tanjansiyel dipol: iki kutup", st: "ec", dur: 30, mont: "av", jit: 0.09,
     build: function (rec, R, rng) { background(rec, { noBlink: true, alphaAmp: 11 }); var g = src(rec, POS.rol(R), "tanjansiyel"); ieds(rec, g, evTimes(rec, 3.5, 6), spk(rng, 110, 140, 0.07, 0.5, { pre: 0.2 }), "diken-dalga"); rec.truth.max = mir("C3", R); rec.truth.max2 = mir("T3", R); rec.truth.tang = true; },
     oz: ["Sulkus duvarındaki korteks skalpa paralel alan üretir: aynı anda bir negatif (sentrotemporal) ve bir pozitif (frontal) maksimum vardır, sıfır çizgisi kaynağın üstünden geçer.",
       "Kaynak negatif maksimumun altında değil, iki kutbun arasındadır. Kaynak derinleştikçe kutuplar birbirinden uzaklaşır.",
@@ -673,7 +790,7 @@ button.wide { align-self: stretch; text-align: left; }
     ipucu: ["Haritada iki kutup arasındaki gradyanın en dik olduğu yer kaynağın izdüşümüdür.", "Pozitif faz karşılaşması gördüğünüzde artefakt demeden önce aynı anda başka yerde negatif kutup arayın."],
     tuzak: ["Rolandik dikende frontal pozitiflik ortalama referansı kirletir: ilgisiz kanallarda küçük ters sapmalar oluşur.", "Orta hat çevresi, orbitofrontal, operküler ve bazal temporal kaynaklar da tanjansiyel ya da oblik alan verir."] });
 
-  S({ id: "l6", grp: "lok", ad: "6 Oblik bazal temporal alan ve kulak referansı", st: "dr", dur: 30, mont: "lb",
+  S({ id: "l6", grp: "lok", ad: "6 Oblik bazal temporal alan ve kulak referansı", st: "dr", dur: 30, mont: "lb", jit: 0.08,
     build: function (rec, R, rng) { background(rec, {}); var g = src(rec, POS.basal(R), "oblik"); ieds(rec, g, evTimes(rec, 3.5, 6), spk(rng, 85, 110, 0.07, 0.6), "diken-dalga"); rec.truth.max = mir("F7", R); },
     oz: ["İnferolateral/bazal temporal korteksin alanı oblik-dikeydir (tip 1): negatif maksimum standart 10–20 dizisinin altında kalır (F9/T9, sfenoidal), skalpta F7–T3 görülür; pozitif kutup verteks ve karşı parasagittal bölgededir.",
       "Aynı taraf kulak elektrotu alanın içindedir: kulak referanslı montajda temporal kanallarda deşarj silinir, parasagittal kanallarda ters polariteyle belirir.",
@@ -682,15 +799,15 @@ button.wide { align-self: stretch; text-align: left; }
     tuzak: ["Temporal uç korteksi öne bakar: maksimum frontopolar-frontotemporal görünür ve frontal odak sanılabilir."] });
 
   S({ id: "l7", grp: "lok", ad: "7 İnterhemisferik kaynak: paradoksal lateralizasyon", st: "ec", dur: 30, mont: "av",
-    build: function (rec, R, rng) { background(rec, { noBlink: true, alphaAmp: 11 }); var g = src(rec, POS.mesFr(R), "tanjansiyel"); ieds(rec, g, evTimes(rec, 3.5, 6), spk(rng, 90, 115, 0.065, 0.55), "diken-dalga"); rec.truth.max = mir("C4", R); rec.truth.tang = true; rec.truth.srcSide = R ? "sağ" : "sol"; },
+    build: function (rec, R, rng) { background(rec, { noBlink: true, alphaAmp: 11 }); var g = src(rec, POS.mesFr(R, rng.pick([0, 0, 0.42, -0.42])), "tanjansiyel"); ieds(rec, g, evTimes(rec, 3.5, 6), spk(rng, 90, 115, 0.065, 0.55), "diken-dalga"); rec.truth.max = mir("C4", R); rec.truth.tang = true; rec.truth.srcSide = R ? "sağ" : "sol"; },
     oz: ["Hemisferin mesial yüzündeki korteks (parasantral lobül, mesial frontal) orta hatta yatay alan üretir: negatif maksimum karşı hemisferin parasagittal bölgesine düşer.",
-      "Bu sahnede kaynak gösterilen tarafın mesial yüzündedir, negatif maksimum ise karşı C elektrotundadır. Aynı taraf santral elektrot pozitiftir.",
+      "Bu sahnede kaynak gösterilen tarafın mesial yüzündedir, negatif maksimum ise karşı parasagittal elektrottadır (kaynağın ön-arka konumuna göre F, C ya da P). Aynı taraftaki eş elektrot pozitiftir.",
       "Transvers montajda Cz çevresinde yan yana negatif ve pozitif faz karşılaşması, ortalama referansta orta hattın iki yanında zıt kutuplar görülür."],
     ipucu: ["Parasagittal diken semiyoloji ya da görüntülemeyle ters tarafta çıkıyorsa mesial kaynak ve tanjansiyel alan düşünün; iki kutbun ortası orta hatta kalır."],
     tuzak: ["Ayak motor alanı ve suplementer motor alan nöbetlerinde iktal ritim de aynı nedenle karşı tarafta ya da verteksde en yüksek olabilir."] });
 
   S({ id: "l8", grp: "lok", ad: "8 Aktif referans", st: "ec", dur: 30, mont: "cz",
-    build: function (rec, R, rng) { background(rec, { noBlink: true, alphaAmp: 11 }); var g = mkSrc(rec, mv(dir("C3", "Cz", 0.4), R), 0.42, null, "radyal"); ieds(rec, g, evTimes(rec, 3.5, 6), spk(rng, 110, 140, 0.065, 0.55), "diken-dalga"); rec.truth.max = mir("C3", R); },
+    build: function (rec, R, rng) { background(rec, { noBlink: true, alphaAmp: 11 }); var g = mkSrc(rec, mv(dir(rng.pick(["C3", "C3", "F3", "P3"]), "Cz", rng.r(0.38, 0.5)), R), 0.42, null, "radyal"); ieds(rec, g, evTimes(rec, 3.5, 6), spk(rng, 110, 140, 0.065, 0.55), "diken-dalga"); rec.truth.max = mir("C3", R); },
     oz: ["Referans elektrot alanın içindeyse tüm kanallara ters polariteyle yansır: Cz referansta parasantral diken her kanalda aşağı sapan senkron bir dalga olarak görünür, asıl elektrotta ise küçülür.",
       "Ortalama referans yüksek genlikli ve yaygın alanlarda aynı şekilde kirlenir: ilgisiz kanallarda küçük ters sapmalar.",
       "Bipolar montaj bu sorundan etkilenmez; gradyanı gösterir."],
@@ -698,7 +815,7 @@ button.wide { align-self: stretch; text-align: left; }
     tuzak: ["'Jeneralize' görünen bir deşarjın tek gerçek odağı referansın kendisi olabilir."] });
 
   S({ id: "l9", grp: "lok", ad: "9 Alan yok: elektrot artefaktı", st: "ec", dur: 30, mont: "lb",
-    build: function (rec, R, rng) { background(rec, {}); var nm = mir(rng.pick(["T3", "C3", "P3", "F7"]), R); evTimes(rec, 4, 7).forEach(function (t) { pop(rec, t, nm, -rng.r(110, 170)); mark(rec, t - 0.1, t + 0.5, "elektrot", "art"); }); rec.truth.peaks = rec.marks.map(function (m) { return m.t0 + 0.11; }); rec.truth.max = nm; rec.truth.art = true; },
+    build: function (rec, R, rng) { background(rec, {}); var nm = mir(rng.pick(["T3", "C3", "P3", "F7", "T5", "F3", "O1", "Fp1"]), R); evTimes(rec, 4, 7).forEach(function (t) { pop(rec, t, nm, -rng.r(110, 170)); mark(rec, t - 0.1, t + 0.5, "elektrot", "art"); }); rec.truth.peaks = rec.marks.map(function (m) { return m.t0 + 0.11; }); rec.truth.max = nm; rec.truth.art = true; },
     oz: ["Tek elektrota sınırlı potansiyel: o elektrotu içeren iki komşu kanalda tam ayna görüntüsü, zincirin geri kalanında hiçbir şey yok.",
       "Beyin kaynaklı alan komşu elektrotlara da yansır ve uzaklaştıkça düzgün düşer; gradyansız, tek elektrotluk 'faz karşılaşması' fizyolojik değildir.",
       "Morfoloji de yardımcıdır: çok dik çıkış, üstel dönüş."],
@@ -708,19 +825,19 @@ button.wide { align-self: stretch; text-align: left; }
   // ----- B. Fokal epileptiform deşarjlar
   S({ id: "e1", grp: "ied", ad: "Anterior temporal diken-dalga ve TIRDA", kisa: "Anterior temporal diken-dalga", st: "dr", dur: 40, mont: "lb",
     build: function (rec, R, rng) {
-      background(rec, {}); var p = POS.basal(R), g = src(rec, p, "oblik");
+      background(rec, {}); var p = POS.basal(R, rng.pick([0, 0, 1, 2])), g = src(rec, p, "oblik");
       ieds(rec, g, evTimes(rec, 3, 5.5).filter(function (t) { return t < 24 || t > 33; }), spk(rng, 80, 110, 0.07, 0.65), "diken-dalga");
       var w = rhythm({ dur: 6.5, f: rng.r(2.4, 3), amp: function (t) { return 55 * ramp(t, 0, 1) * (1 - ramp(t, 5.3, 6.5)); }, shape: "sin", jit: 0.03 }, rng);
       add(rec, g, w, 25.5); mark(rec, 25.5, 32, "TIRDA", "ev"); rec.truth.max = mir("F7", R);
     },
-    oz: ["Maksimum F7–T3 (alt sıra elektrot varsa F9/T9, sfenoidal); aynı taraf kulak aktif, verteks pozitif: oblik tip 1 alan.",
+    oz: ["Maksimum F7–T3 (alt sıra elektrot varsa F9/T9, sfenoidal); aynı taraf kulak aktif, verteks pozitif: oblik tip 1 alan. Örnekten örneğe kaynak anterior-inferior, orta-inferior (kulak elektrotu en aktif) ya da temporal uçta (alan Fp'ye taşar) olur.",
       "NREM'de sıklaşır; olguların yaklaşık üçte birinde iki yanlı bağımsızdır.",
       "TIRDA: 1–4 Hz, 4–20 s süren ritmik, sinüzoidal delta dizileri, anterior temporal. Polimorfik deltanın aksine temporal lob epilepsisi için diken kadar özgüldür."],
     ipucu: ["Diken çift muzda küçük görünüyorsa alan geniştir ve gradyan düşüktür: referans montajda genlik belirginleşir.", "Düzenli temporal delta dizisini 'nonspesifik yavaşlama' diye geçmeyin; ritmisite ve süre TIRDA'yı ayırır."],
     tuzak: ["Wicket dikenleri ve BETS aynı bölgede, aynı uyku evresinde görülür: yavaş dalga, zemin bozulması ve alanın oblik düzeni ayırır.", "Tek taraflı interiktal diken nöbet başlangıç tarafını garanti etmez."] });
 
   S({ id: "e2", grp: "ied", ad: "Orta-posterior temporal keskin dalga (lateral neokortikal)", kisa: "Posterior temporal keskin dalga", st: "ec", dur: 30, mont: "lb",
-    build: function (rec, R, rng) { background(rec, {}); var g = src(rec, POS.lat(R), "radyal"); ieds(rec, g, evTimes(rec, 3.5, 6), spk(rng, 75, 105, 0.13, 0.75), "keskin-yavaş dalga"); rec.truth.max = mir("T5", R); rec.truth.max2 = mir("T3", R); },
+    build: function (rec, R, rng) { background(rec, {}); var g = src(rec, POS.lat(R, rng.r(0.3, 1)), "radyal"); ieds(rec, g, evTimes(rec, 3.5, 6), spk(rng, 75, 105, 0.13, 0.75), "keskin-yavaş dalga"); rec.truth.max = mir("T5", R); rec.truth.max2 = mir("T3", R); },
     oz: ["Lateral konveksite kaynağı: radyal (tip 2) alan, maksimum T3–T5, kulak ve F7 daha az aktif, verteks pozitifliği yok.",
       "Süre 70–200 ms (keskin dalga), ardından belirgin yavaş dalga.",
       "Neokortikal temporal epilepsi, posterior temporal lezyonlar; alan geniş ise pariyetal ve oksipital elektrotlara taşar."],
@@ -743,7 +860,7 @@ button.wide { align-self: stretch; text-align: left; }
 
   S({ id: "e4", grp: "ied", ad: "Frontal diken ve sekonder bilateral senkroni", kisa: "Frontal diken (sekonder bilateral senkroni)", st: "ec", dur: 40, mont: "lb",
     build: function (rec, R, rng) {
-      background(rec, { blinks: [9.5, 27] }); var g = mkSrc(rec, mv(dir("F3"), R), 0.42, null, "radyal"), gc = gain(mv(dir("F4"), R), 0.42), gz = gain(dir("Fz"), 0.42), mk = spk(rng, 85, 115, 0.065, 0.6);
+      background(rec, { blinks: [9.5, 27] }); var d0 = rng.pick([dir("F3"), dir("F3"), dir("Fp1", "F3", 0.5), dir("F3", "F7", 0.45), dir("F3", "Fz", 0.4)]), g = mkSrc(rec, mv(d0, R), 0.42, null, "radyal"), gc = gain(mv(d0, !R), 0.42), gz = gain(dir("Fz"), 0.42), mk = spk(rng, 85, 115, 0.065, 0.6);
       ieds(rec, g, [rng.r(2.5, 4.5), rng.r(13, 16), rng.r(31, 35)], mk, "frontal diken");
       [rng.r(6, 7.5), rng.r(21, 24)].forEach(function (t0) {
         var lead = spikeTpl({ amp: 90, dur: 0.065, slow: 0.5 }); discharge(rec, g, t0, lead);
@@ -760,34 +877,34 @@ button.wide { align-self: stretch; text-align: left; }
     tuzak: ["Jeneralize epilepside de fokal görünümlü fragmanlar ve asimetri olur: taraf kayıt boyunca değişiyorsa sekonder bilateral senkroni demeyin."] });
 
   S({ id: "e5", grp: "ied", ad: "Orta hat (Cz) dikenleri", st: "n2", dur: 30, mont: "lb",
-    build: function (rec, R, rng) { background(rec, {}); var g = mkSrc(rec, dir("Cz", "Fz", 0.25), 0.42, null, "radyal"); ieds(rec, g, evTimes(rec, 3.5, 6), spk(rng, 80, 110, 0.055, 0.7), "orta hat dikeni"); rec.truth.max = "Cz"; },
-    oz: ["Maksimum Cz (Fz ya da Pz'ye kayabilir); parasagittal zincirlerde simetrik ve küçük, orta hat zincirinde ve transvers montajda faz karşılaşması.",
+    build: function (rec, R, rng) { background(rec, {}); var g = mkSrc(rec, dir("Cz", rng.pick(["Fz", "Fz", "Pz"]), rng.pick([0.1, 0.25, 0.25, 0.6, 0.9])), 0.42, null, "radyal"); ieds(rec, g, evTimes(rec, 3.5, 6), spk(rng, 80, 110, 0.055, 0.7), "orta hat dikeni"); rec.truth.max = "Cz"; },
+    oz: ["Maksimum çoğunlukla Cz, bazı örneklerde Fz ya da Pz; parasagittal zincirlerde simetrik ve küçük, orta hat zincirinde ve transvers montajda faz karşılaşması.",
       "Aynı kayıtta fizyolojik verteks dalgaları ve K kompleksleri de var: karşılaştırın.",
       "Verteks dalgasından ayıranlar: daha kısa süre (70 ms altı diken bileşeni), belirgin ardıl yavaş dalga, uyanıklıkta ve REM'de de görülmesi, stereotipik olması, alanın bazen orta hattan yana kayması."],
     ipucu: ["Yalnız N1–N2'de görülen, iğciklerle birlikte gelen, genliği ve biçimi değişken verteks keskinlerini epileptiform saymayın."],
     tuzak: ["Mesial frontal/parasantral odaklar tanjansiyel alanla karşı tarafa lateralize görünebilir (bkz. ders 7)."] });
 
   S({ id: "e6", grp: "ied", ad: "Santropariyetal diken", st: "ec", dur: 30, mont: "lb",
-    build: function (rec, R, rng) { background(rec, {}); var g = mkSrc(rec, mv(dir("C3", "P3", 0.6), R), 0.42, null, "radyal"); ieds(rec, g, evTimes(rec, 3.5, 6), spk(rng, 80, 110, 0.065, 0.6), "diken-dalga"); rec.truth.max = mir("P3", R); rec.truth.max2 = mir("C3", R); },
-    oz: ["Parasagittal zincirde C3–P3 çevresinde faz karşılaşması; temporal zincirde alan kenarı.",
+    build: function (rec, R, rng) { background(rec, {}); var g = mkSrc(rec, mv(rng.u() < 0.7 ? dir("C3", "P3", rng.r(0.25, 1)) : dir("P3", rng.pick(["Pz", "T5"]), rng.r(0.2, 0.45)), R), 0.42, null, "radyal"); ieds(rec, g, evTimes(rec, 3.5, 6), spk(rng, 80, 110, 0.065, 0.6), "diken-dalga"); rec.truth.max = mir("P3", R); rec.truth.max2 = mir("C3", R); },
+    oz: ["Parasagittal zincirde C3–P3 çevresinde faz karşılaşması; temporal zincirde alan kenarı. Örnekten örneğe odak santralden pariyetale, orta hatta ya da posterior temporale doğru kayar.",
       "Pariyetal odaklar interiktal ve iktal EEG'de en az lokalize edilen gruptur: deşarjlar sıklıkla temporal, frontal ya da iki yanlı yansır.",
       "Konveksite kaynağı radyaldir; santral sulkus derinliğindeki kaynak ise tanjansiyel alan verir (frontal pozitif, pariyetal negatif ya da tersi)."],
     ipucu: ["Transvers montajda P3–Pz ve T5–P3 ile mediyal-lateral konumu sabitleyin."],
     tuzak: ["Mü ritminin tek bir keskin yayı aynı bölgede görülür: ardıl yavaş dalga yoktur, zemindeki dizinin parçasıdır."] });
 
   S({ id: "e7", grp: "ied", ad: "Oksipital dikenler", st: "ec", dur: 30, mont: "lb",
-    build: function (rec, R, rng) { background(rec, { alphaAmp: 22 }); var g = mkSrc(rec, mv(dir("O1", "T5", 0.2), R), 0.45, null, "radyal"); ieds(rec, g, evTimes(rec, 2.5, 4.5), spk(rng, 85, 120, 0.065, 0.6), "oksipital diken"); rec.truth.max = mir("O1", R); },
+    build: function (rec, R, rng) { background(rec, { alphaAmp: 22 }); var g = mkSrc(rec, mv(dir("O1", rng.pick(["T5", "T5", "P3", "O2"]), rng.r(0.05, 0.36)), R), 0.45, null, "radyal"); ieds(rec, g, evTimes(rec, 2.5, 4.5), spk(rng, 85, 120, 0.065, 0.6), "oksipital diken"); rec.truth.max = mir("O1", R); },
     oz: ["Maksimum O1/O2: zincir ucu, çift muzda P3–O1 ve T5–O1 aynı yönde yukarı sapar; O1–O2 ya da referans montaj gerekir.",
       "Negatif polarite, kısa süre ve ardıl yavaş dalga; lambda ve POSTS pozitiftir.",
       "Çocukta göz kapamayla ortaya çıkan, fiksasyonla baskılanan dizi (fiksasyon-off duyarlılığı) kendini sınırlayan oksipital epilepsileri düşündürür; erişkinde yapısal neden aranır."],
     ipucu: ["Göz açık-kapalı ve fiksasyon engellenmiş bölümleri ayrı ayrı değerlendirin."],
     tuzak: ["Oksipital deşarj posterior temporale yayıldığında T5/T6 maksimumu görülür ve temporal odak sanılır.", "Posterior baskın ritmin keskin konturlu tek dalgaları ve gençliğin posterior yavaş dalgaları diken-dalga izlenimi verir."] });
 
-  S({ id: "e8", grp: "ied", ad: "Fokal polimorfik delta (epileptiform değil)", kisa: "Fokal polimorfik delta", st: "ec", dur: 30, mont: "lb",
+  S({ id: "e8", grp: "yav", ad: "Fokal polimorfik delta (epileptiform değil)", kisa: "Fokal polimorfik delta", st: "ec", dur: 30, mont: "lb",
     build: function (rec, R, rng) {
-      background(rec, {}); var names = ["F7", "T3", "T5", "C3"].map(function (n) { return mir(n, R); }), w = new Float32Array(NEL);
-      names.forEach(function (nm, i) { addTo(rec.ev, gain(dir(nm), 0.45), pink(rec.n, rng, [1, 0.35, 0.05, 0]), 0, [34, 40, 30, 16][i]); w[EI[nm]] = 0.55; });
-      attenuate(rec, w, function () { return 0.45; }); mkSrc(rec, mv(dir("T3"), R), 0.45, null, "lezyon"); rec.truth.max = mir("T3", R); rec.truth.peaks = [5]; mark(rec, 0.5, rec.dur - 0.5, "sürekli fokal delta", "ev");
+      background(rec, {}); var names = rng.pick([["T3", "F7", "T5", "C3"], ["T3", "F7", "T5", "C3"], ["F3", "Fp1", "F7", "C3"], ["P3", "C3", "T5", "O1"], ["C3", "F3", "P3", "T3"]]).map(function (n) { return mir(n, R); }), w = new Float32Array(NEL);
+      names.forEach(function (nm, i) { addTo(rec.ev, gain(dir(nm), 0.45), pink(rec.n, rng, [1, 0.35, 0.05, 0]), 0, [40, 34, 30, 16][i]); w[EI[nm]] = 0.55; });
+      attenuate(rec, w, function () { return 0.45; }); mkSrc(rec, dir(names[0]), 0.45, null, "lezyon"); rec.truth.max = names[0]; rec.truth.peaks = [5]; mark(rec, 0.5, rec.dur - 0.5, "sürekli fokal delta", "ev");
     },
     oz: ["Sürekli, düzensiz, 1–3 Hz, reaktivitesi az delta; aynı bölgede alfa ve hızlı aktivitede azalma.",
       "Altta yatan beyaz cevheri de tutan yapısal lezyonu gösterir; epileptojenite hakkında bir şey söylemez.",
@@ -1472,10 +1589,749 @@ button.wide { align-self: stretch; text-align: left; }
     return o;
   }
 
+  // ----- G. Uyku EEG'si; H. Aktivasyon: hiperventilasyon ve aralıklı fotik stimülasyon
+  var W_F = function (nm, p) { return p[1] > 0.4 ? 1.4 : p[1] > -0.2 ? 0.9 : 0.45; }, W_P = function (nm, p) { return p[1] < -0.4 ? 1.4 : p[1] < 0.2 ? 0.9 : 0.45; }, W_C = function (nm, p) { return 0.55 + 0.6 * Math.max(0, p[2]) + 0.2 * p[1]; };
+  function wK(wf, k, R, ips, con) { return function (nm, p) { var s = p[0] * (R ? 1 : -1); return k * wf(nm, p) * (ips == null ? 1 : s > 0.1 ? ips : s < -0.1 ? con : 0.5 * (ips + con)); }; }
+  function gateArr(x, fn) { for (var i = 0; i < x.length; i++) x[i] *= fn(i / FS); return x; }
+  var G_SEM = gainOf({ F7: 1, F8: -1, Fp1: 0.45, Fp2: -0.45, F3: 0.3, F4: -0.3, T3: 0.3, T4: -0.3, A1: 0.4, A2: -0.4 });
+  function vtx(rec, t, amp, d) { addTo(rec.ev, gain(d || dir("Cz"), 0.36), knots([[0, 0], [0.03, 0.1], [0.1, -1], [0.2, 0.3], [0.34, 0]], amp), t); }
+  function kOnly(rec, t, amp) { addTo(rec.ev, gain(dir("Fz", "Cz"), 0.3), knots([[0, 0], [0.16, -1], [0.5, 0.7], [0.95, 0]], amp || rec.rng.r(140, 200)), t); }
+  function posts(rec, t, n, amp) { var g1 = gain(dir("O1"), 0.45), g2 = gain(dir("O2"), 0.45), i, w; for (i = 0; i < n; i++) { w = knots([[0, 0], [0.055, 1], [0.15, -0.2], [0.21, 0]], amp * rec.rng.r(0.8, 1.2)); add(rec, g1, w, t + i * 0.23 - 0.055); add(rec, g2, w, t + i * 0.23 - 0.055, rec.rng.r(0.7, 1)); } }
+  // Falling asleep from eyes-closed wakefulness at td: slow rolling eye movements, central theta, then vertex waves and POSTS.
+  function sleepOnset(rec, td, o) {
+    var rng = rec.rng, n = rec.n, t;
+    addTo(rec.bg, G_SEM, gateArr(reson(n, rng, 0.3, 0.22), function (x) { return ramp(x, td - 4, td + 1) * (o.semEnd ? 1 - ramp(x, o.semEnd, o.semEnd + 5) : 1); }), 0, 30);
+    ["C3", "C4", "T3", "T4", "Fz", "Cz"].forEach(function (nm) { addTo(rec.bg, gain(dir(nm), 0.5), gateArr(reson(n, rng, rng.r(5, 6.6), 1.8), function (x) { return ramp(x, td + 1, td + 7); }), 0, 8); });
+    if (o.vertexFrom != null) { t = o.vertexFrom; while (t < (o.vertexTo || rec.dur) - 1) { vtx(rec, t, rng.r(70, 140)); if (o.marks !== false) mark(rec, t - 0.05, t + 0.42, "verteks dalgası", "var"); t += rng.r(3, 7); } }
+    if (o.postsFrom != null) { t = o.postsFrom; while (t < rec.dur - 2) { var k = rng.i(1, 5); posts(rec, t, k, rng.r(35, 55)); if (o.marks !== false) mark(rec, t - 0.12, t + k * 0.23 + 0.1, "POSTS", "var"); t += k * 0.23 + rng.r(3, 6); } }
+  }
+  // NREM slow activity that fades in at t0 on an awake record (used when a record crosses states).
+  function n2Layer(rec, t0, amp) { var rng = rec.rng; ["Fz", "Cz", "F3", "F4", "C3", "C4", "P3", "P4"].forEach(function (nm) { addTo(rec.bg, gain(dir(nm), 0.45), gateArr(reson(rec.n, rng, rng.r(1.2, 2.6), 1.6), function (x) { return ramp(x, t0, t0 + 6); }), 0, amp || 8); }); }
+  // Spindles, K complexes and vertex waves of N2 between t0 and t1. o: { mark, wL, wR (hemisphere weights), skip: [a, b], noK, snd: index of an evoked K }
+  function n2Events(rec, t0, t1, o) {
+    o = o || {}; var rng = rec.rng, t = t0 + rng.r(0.3, 1.5), k = 0, q, d, wL = o.wL == null ? 1 : o.wL, wR = o.wR == null ? 1 : o.wR, vd = wL === wR ? dir("Cz") : dir("Cz", wL > wR ? "C3" : "C4", 0.6), first = null;
+    while (t < t1 - 2) {
+      if (o.skip && t > o.skip[0] - 2 && t < o.skip[1]) { t = o.skip[1] + rng.r(0.5, 2); continue; }
+      q = rng.u(); if (first == null) first = t;
+      if (k === o.snd) { note(rec, t - 0.3, "ses uyaranı"); kOnly(rec, t); spindle(rec, t + 0.75, rng.r(0.6, 1), 1, null, wL, wR); if (o.mark) mark(rec, t - 0.1, t + 1.8, "K kompleksi (uyarılmış)", "var"); }
+      else if (q < 0.5) { d = rng.r(0.7, 1.5); spindle(rec, t, d, 1, null, wL, wR); if (o.mark) mark(rec, t - 0.05, t + d + 0.05, o.spLabel || "iğcik", "var"); }
+      else if (q < 0.72 && !o.noK) { kOnly(rec, t); spindle(rec, t + 0.75, rng.r(0.6, 1), 1, null, wL, wR); if (o.mark) mark(rec, t - 0.1, t + 1.8, "K kompleksi", "var"); }
+      else { vtx(rec, t + 0.1, rng.r(90, 150) * Math.max(wL, wR), vd); if (o.mark) mark(rec, t - 0.02, t + 0.48, "verteks dalgası", "var"); }
+      t += rng.r(2.6, 5); k++;
+    }
+    return first;
+  }
+
+  S({ id: "u1", yan: false, grp: "uyk", ad: "Uyanıklıktan N1'e geçiş", kisa: "Uyuklama ve N1", st: "ec", dur: 60, page: 20, mont: "lb", map: "rms",
+    build: function (rec, R, rng) {
+      var td = rng.r(12, 16);
+      background(rec, { eyes: [[td, td + 3.2], [td + 5, td + 9.5], [td + 11, rec.dur + 5]], blinks: [rng.r(2, 4), rng.r(7, 10)] });
+      sleepOnset(rec, td, { vertexFrom: td + rng.r(18, 22), postsFrom: td + rng.r(24, 28) });
+      mark(rec, td - 4, td, "yavaş göz hareketleri", "ev"); mark(rec, td, td + 11, "alfa dağılıyor, yerini teta alıyor", "ev"); rec.truth.peaks = [td + 1];
+    },
+    oz: ["İlk bulgu çoğu kez EEG'de değil gözlerdedir: 0,25–0,5 Hz, yatay, sinüzoidal yavaş göz hareketleri (F7 ve F8'de ters fazlı) ve göz kırpmalarının kesilmesi. Kas artefaktı azalır, beta görece belirginleşir.",
+      "Alfa yavaşlar, parçalanır ve aralıklarla geri gelerek kaybolur (alfa dağılması); yerini düşük-orta genlikli 2–7 Hz karışık aktivite alır. Epoğun yarısından fazlasında alfa yoksa N1'dir.",
+      "N1'in sonuna doğru verteks keskin dalgaları (Cz, yaklaşık 200 ms, difazik) ve POSTS belirir. İğcik ya da K kompleksi görüldüğü anda evre N2'dir."],
+    ipucu: ["Uyuklamayı gözler açık uyanıklıktan ayıran: göz kırpma ve sakkad yok, yavaş göz hareketi var, araya alfa değil yavaş dalga giriyor.", "Bu dönemde verilen uyaran alfayı geri getirir (paradoksal alfa); reaktiviteyi ve epileptiform deşarj aktivasyonunu en iyi bu geçiş gösterir."],
+    tuzak: ["Uyuklamanın frontosantral teta ve beta patlamaları, özellikle çocuk ve gençte paroksismal görünür; ardıl yavaş dalgası ve alanı olmayan keskin konturu diken saymayın.", "Yavaş göz hareketleri F7/F8'de 'temporal delta' gibi durur: iki tarafta ters fazlı olması ve alanın göz çevresiyle sınırlı kalması ayırır."] });
+
+  S({ id: "u2", yan: false, grp: "uyk", ad: "N2: uyku iğcikleri ve K kompleksleri", kisa: "N2 uykusu", st: "n2", dur: 40, mont: "lb",
+    build: function (rec, R, rng) { background(rec, { spindles: false, vertex: false }); var t = n2Events(rec, 1, rec.dur, { mark: true, snd: rng.i(2, 4) }); posts(rec, rng.r(8, 12), 3, 45); rec.truth.peaks = [t + 0.3]; rec.truth.max = "Cz"; },
+    oz: ["İğcik: 11–16 Hz (çoğunlukla 12–14), en az 0,5 s süren, genliği artıp azalan sinüzoidal dizi; santral maksimum, iki yanlı senkron. Daha yavaş (10–12 Hz) ve frontal ikinci bir tip derin uykuya doğru belirginleşir.",
+      "K kompleksi: keskin negatif dalga ve onu izleyen pozitif yavaş bileşen, toplam en az 0,5 s, frontosantral maksimum; kendiliğinden ya da ani bir ses uyaranıyla ortaya çıkar, çoğu kez ardından iğcik gelir.",
+      "Zemin teta ve düşük genlikli deltadır; verteks dalgaları ve POSTS sürer. Rutin EEG'de interiktal deşarj verimi en yüksek evre N1–N2'dir."],
+    ipucu: ["İğcik ve verteks dalgası iki hemisferde simetrik ve senkron olmalıdır; iki yaşından sonra süreğen asenkroni ya da tek yanlı azalma anormaldir.", "İğcik frekansını beta ile karıştırmayın: iğcik epizodiktir, santraldir ve evreye bağlıdır; ilaç betası süreklidir ve 15 Hz'in üstündedir."],
+    tuzak: ["Jeneralize epilepside diken-dalga K kompleksinin üzerine binebilir (epileptik K kompleksi, 'dyshormia'): kompleksin yükselen kolunda tutarlı bir diken arayın.", "Çocukta K kompleksleri ve verteks dalgaları çok yüksek genlikli ve sivridir; yalnız morfolojiye bakarak epileptiform demeyin."] });
+
+  S({ id: "u3", yan: false, grp: "uyk", ad: "N3: yavaş dalga uykusu", kisa: "N3 uykusu", st: "n3", dur: 40, mont: "ear",
+    build: function (rec, R, rng) { background(rec, {}); var t = rng.r(5, 9); mark(rec, t, t + 8, "0,5–2 Hz, ≥75 µV delta", "var"); rec.truth.peaks = [t + 2]; },
+    oz: ["Frontal baskın, 0,5–2 Hz, tepeden tepeye 75 µV'u aşan delta dalgaları epoğun en az %20'sini kaplar (AASM; ölçüm frontal derivasyonda, karşı mastoid/kulak referansıyla yapılır).",
+      "İğcikler seyrekleşir, yavaşlar ve frontale kayar; K kompleksleri deltanın içinde seçilmez olur. Göz hareketi yoktur.",
+      "Gecenin ilk üçte birinde yoğunlaşır; rutin 20–30 dakikalık kayıtta ancak uyku yoksunluğu ya da sedasyonla görülür. NREM parasomnileri (konfüzyonel uyanma, uyurgezerlik, gece terörü) bu evreden kalkar."],
+    ipucu: ["Bu sahne kulak referansıyla açılır: genlik ölçütü referans derivasyonda geçerlidir, çift muzda kısa elektrot aralığı deltayı küçük gösterir.", "Yaşla birlikte delta genliği düşer; yaşlıda süre ölçütü karşılansa da 75 µV eşiği aşılamayabilir."],
+    tuzak: ["Uyanık hastadaki yaygın delta ile karıştırmayın: karar veren zemin değil durumdur (uyandırılabilirlik, iğcik varlığı, reaktivite).", "N3'te interiktal deşarjlar sıklaşır ve alanları genişler; lateralizasyon için N2 ve REM daha güvenilirdir."] });
+
+  S({ id: "u4", yan: false, grp: "uyk", ad: "REM: testere dişi dalgalar ve hızlı göz hareketleri", kisa: "REM uykusu", st: "rem", dur: 40, mont: "lb",
+    build: function (rec, R, rng) {
+      background(rec, { noBlink: true }); var t = rng.r(2, 4), i, m, left, tt, d, a; rec.truth.peaks = [];
+      while (t < rec.dur - 6) {
+        if (rng.u() < 0.75) { d = rng.r(1.5, 3); a = rng.r(30, 48); (function (d, a) { var w = rhythm({ dur: d, f: rng.r(2.5, 4.5), amp: function (x) { return a * ramp(x, 0, 0.4) * (1 - ramp(x, d - 0.4, d)); }, shape: "saw", jit: 0.08, av: 0.22 }, rng); [["Cz", 1], ["Fz", 0.8], ["C3", 0.7], ["C4", 0.7], ["Pz", 0.5]].forEach(function (s) { add(rec, gain(dir(s[0]), 0.5), w, t, s[1]); }); })(d, a); mark(rec, t, t + d, "testere dişi dalgalar", "var"); rec.truth.peaks.push(t + d / 2); t += d + rng.r(0.1, 0.6); }
+        m = rng.i(2, 5); left = rng.u() < 0.5; tt = t; for (i = 0; i < m; i++) { eyeLat(rec, tt, rng.r(55, 110), left); left = rng.u() < 0.75 ? !left : left; tt += rng.r(0.35, 0.9); }
+        mark(rec, t - 0.1, tt + 0.5, "hızlı göz hareketleri", "ev"); t = tt + rng.r(3, 7);
+      }
+      rec.truth.max = "Cz";
+    },
+    oz: ["Zemin N1'e benzer: düşük genlikli, karışık frekanslı; uyanıklıktakinden 1–2 Hz yavaş alfa araya girebilir. İğcik ve K kompleksi yoktur.",
+      "Testere dişi dalgalar: 2–6 Hz, üçgen biçimli, santral-verteks maksimum, kısa diziler; sıklıkla hızlı göz hareketi patlamasının hemen önünde.",
+      "Hızlı göz hareketleri: 500 ms'den kısa başlangıç defleksiyonlu, konjuge, düzensiz, patlamalar halinde; F7 ve F8'de ters fazlı. Evreleme için üçüncü ölçüt çene EMG'sinde atonidir; bu simülatörde EMG kanalı yoktur."],
+    ipucu: ["İnteriktal deşarjlar REM'de en seyrek ve en dar alanlıdır: REM'de süren fokal deşarj, odak lokalizasyonu için NREM'dekinden daha güvenilirdir.", "Rutin kayıtta REM genellikle uyku yoksunluğunun sonucudur; uyku başlangıcında (ilk 15 dakika) REM görülmesi tek başına narkolepsi anlamına gelmez, ama not edilmelidir."],
+    tuzak: ["Lateral rektus dikenleri sakkadın başında F7/F8'de görülür ve anterior temporal diken sanılır: tek elektrotludur, yavaş dalgası yoktur, göz hareketine kilitlidir.", "Testere dişi dalgaları santral teta nöbet ritmi ya da orta hat diken dizisi sanmayın: evrim yok, süre kısa, REM'e özgü."] });
+
+  S({ id: "u5", yan: false, grp: "uyk", ad: "Hipnagojik hipersenkroni (çocuk)", kisa: "Hipnagojik hipersenkroni", st: "dr", dur: 30, mont: "lb", map: "rms",
+    build: function (rec, R, rng) {
+      background(rec, { alpha: rng.r(8, 9) }); var f = rng.r(3.8, 5), t = rng.r(2, 4), d, A, nt; rec.truth.peaks = [];
+      while (t < rec.dur - 5) { d = rng.r(1.6, 4); A = rng.r(150, 230); nt = rng.u() < 0.5; (function (d, A, nt) { addGen(rec, rhythm({ dur: d, f: f, amp: function (x) { return ramp(x, 0, 0.5) * (1 - ramp(x, d - 0.5, d)); }, shape: "sin", shape2: "notch", k: nt ? 0.45 : 0, jit: 0.03 }, rng), t, wK(W_C, A)); })(d, A, nt); mark(rec, t - 0.1, t + d + 0.1, nt ? "hipnagojik hipersenkroni (çentikli)" : "hipnagojik hipersenkroni", "var"); rec.truth.peaks.push(t + d / 2); t += d + rng.r(3.5, 7); }
+      rec.truth.max = "Cz";
+    },
+    oz: ["Uyuklamada aniden başlayıp biten, 3–5 Hz, yüksek genlikli (200 µV ve üstü), sinüzoidal, yaygın ama frontosantral baskın patlamalar ya da sürekli diziler. Bebeklikte 3–4 Hz, büyük çocukta 4–5 Hz.",
+      "Üç aylıktan itibaren görülür, okul çağında azalır; 11 yaşından sonra sağlıklı çocukların yaklaşık onda birinde kalır, 12–13 yaşından sonra nadirdir.",
+      "Uyanma sırasında benzeri görülür (postarousal hipersenkroni): frontal 2,5–3,5 Hz monomorfik ritim, uyanma ilerledikçe hızlanır ve arkaya kayar."],
+    ipucu: ["Dalgaların arasına karışan küçük keskin bileşenler (çentik) yavaş dalgaya göre sabit bir zamanda değildir; gerçek diken-dalgada diken her komplekste aynı yerdedir.", "Aynı çocuğun uyanıklık ve N2 kaydında jeneralize diken-dalga yoksa bu patern tek başına epileptiform sayılmaz."],
+    tuzak: ["En sık 'jeneralize diken-dalga' yanlış okumasına yol açan normal çocukluk paterni budur.", "Erişkinde aynı görünüm normal değildir: uyuklamadaki paroksismal yüksek genlikli ritmik yavaşlama ayrıca değerlendirilir."] });
+
+  S({ id: "u6", yan: false, grp: "uyk", ad: "Uyanma reaksiyonu (arousal)", kisa: "Arousal", st: "n2", dur: 40, mont: "lb", map: "rms",
+    build: function (rec, R, rng) {
+      background(rec, { spindles: false, vertex: false }); var ta = rng.r(17, 21), da = rng.r(5, 8);
+      n2Events(rec, 1, rec.dur, { skip: [ta - 1, ta + da + 3] }); note(rec, ta - 0.3, "ses uyaranı"); kOnly(rec, ta, 190);
+      attenuate(rec, wAll(0.7), function (t) { return 1 - ramp(t, ta + 0.5, ta + 1.2) * (1 - ramp(t, ta + da, ta + da + 3)); });
+      addGen(rec, rhythm({ dur: da, f: rng.r(8, 9.5), amp: function (x) { return ramp(x, 0, 0.6) * (1 - ramp(x, da - 1.2, da)); }, jit: 0.05, av: 0.25 }, rng), ta + 0.8, function (nm, p) { return 16 + 10 * Math.max(0, p[2]) + (p[1] < -0.4 ? 14 : 0); });
+      emg(rec, ta + 0.7, da - 1.5, ["T3", "T4", "F7", "F8", "Fp1", "Fp2"], 9); blink(rec, ta + rng.r(1.8, 2.4), 130); blink(rec, ta + rng.r(3.4, 4.2), 110);
+      mark(rec, ta - 0.1, ta + da, "arousal: K kompleksi, alfa, kas aktivitesi", "ev"); rec.truth.peaks = [ta + 1.5];
+    },
+    oz: ["Uyaranla ya da kendiliğinden: K kompleksi, hemen ardından zeminde ani frekans artışı (alfa, teta ya da 16 Hz üstü; iğcik sayılmaz), kas tonusu ve göz kırpmaları. AASM tanımıyla en az 3 s sürer ve öncesinde en az 10 s kesintisiz uyku vardır.",
+      "Evrim yoktur: frekans ve alan sabit kalır, birkaç saniyede söner ve kayıt aynı evreye ya da N1'e döner.",
+      "Çocukta hızlı bileşeni yüksek genlikli frontal 2,5–3,5 Hz hipersenkron yavaşlama izler; erişkinde benzeri 'paradoksal uyanma yanıtı'dır."],
+    ipucu: ["Nöbet başlangıcından ayıran: uyarana kilitli olması, stereotipik olmaması, frekans-genlik-alan evrimi göstermemesi ve ardından normal uyku ögelerinin geri gelmesi.", "Aynı hastada tekrarlayan, hep aynı biçimde başlayan ve motor bulgu eşlik eden 'arousal'lar uykuyla ilişkili hipermotor epilepsi açısından video ile değerlendirilir."],
+    tuzak: ["Uykudan uyanıklığa geçişteki fizyolojik değişikliklerin 'iktal' diye raporlanması bilinen bir aşırı yorum kaynağıdır.", "K kompleksinin sivri ilk bileşeni ve ardından gelen alfa, 'diken ve hızlı ritim' gibi görünür."] });
+
+  S({ id: "u7", grp: "uyk", ad: "Asimetrik uyku iğcikleri (tek yanlı azalma)", kisa: "Asimetrik iğcikler", st: "n2", dur: 40, mont: "ear",
+    build: function (rec, R, rng) {
+      background(rec, { spindles: false, vertex: false }); var aff = ["C3", "F3", "P3", "T3", "F7", "T5"].map(function (n) { return mir(n, R); });
+      var t = n2Events(rec, 1, rec.dur, { mark: true, wL: R ? 1 : 0.22, wR: R ? 0.22 : 1, spLabel: "iğcik: " + (R ? "sağda" : "solda") + " düşük", noK: true });
+      slowBg(rec, 9, aff.slice(0, 4)); attenuate(rec, wNames(aff, 0.4), function () { return 0; });
+      mkSrc(rec, mv(dir("C3", "T3", 0.4), R), 0.6, null, "lezyon"); rec.truth.peaks = [t + 0.4];
+    },
+    oz: ["İğcikler ve verteks dalgaları bir hemisferde süreğen biçimde düşük genlikli ya da yok; aynı tarafta hızlı aktivite azalmış, hafif yavaşlama eklenmiş.",
+      "Uyku ögelerinin azaldığı taraf lezyon tarafıdır (talamokortikal devre ya da korteks: inme, tümör, subdural koleksiyon).",
+      "Aynı kural K kompleksleri ve verteks dalgaları için de geçerlidir: süreğen asimetri anormaldir, tek tük asimetrik dalga değildir."],
+    ipucu: ["Asimetriyi referans montajda doğrulayın (sahne kulak referansıyla açılır): uzunlamasına bipolar montajda elektrot aralığı farkı ya da alanın eğimi yalancı asimetri yaratır.", "Karşılaştırmayı aynı iğcik üzerinde homolog elektrotlarla yapın (C3–A1 ile C4–A2); %50'yi aşan ve kayıt boyunca aynı yönde kalan fark anlamlıdır."],
+    tuzak: ["Kemik defekti tarafında iğcik ve beta daha yüksek görünür (breach): bu durumda anormal taraf düşük olan taraf değildir.", "Baş bir yana yatıkken kulak elektrotunun yastığa basması referansı bozar ve tek taraflı genlik düşüklüğü taklit eder."] });
+
+  S({ id: "u8", grp: "uyk", ad: "Uykuyla deşarj aktivasyonu: uyanıklık → N2", kisa: "Uykuyla aktive olan fokal deşarj", st: "ec", dur: 70, page: 20, mont: "lb",
+    build: function (rec, R, rng) {
+      var td = rng.r(20, 24), t2 = td + 18, g = src(rec, POS.basal(R, 0), "oblik"), pc = POS.basal(!R, 0), gc = gain(pc.d, pc.r, pc.ori), ts = [rng.r(7, 15), td + rng.r(6, 9), td + rng.r(12, 16)], t = t2 + rng.r(1, 2.5);
+      background(rec, { eyes: [[td, rec.dur + 5]], blinks: [rng.r(2, 5), rng.r(15, 18)] });
+      sleepOnset(rec, td, { semEnd: td + 13, vertexFrom: td + 11, vertexTo: t2, marks: false }); n2Layer(rec, t2 - 3, 8); n2Events(rec, t2, rec.dur, {});
+      while (t < rec.dur - 1.5) { ts.push(t); t += rng.r(1.4, 3.6); }
+      ieds(rec, g, ts, spk(rng, 80, 110, 0.07, 0.6), "diken-dalga"); ieds(rec, gc, [t2 + rng.r(8, 14), t2 + rng.r(18, 24)], spk(rng, 60, 85, 0.07, 0.6), "karşı taraf, bağımsız");
+      mark(rec, 0.3, td, "uyanıklık", "ev"); mark(rec, td, t2, "N1", "ev"); mark(rec, t2, rec.dur - 0.3, "N2: deşarj sıklaşıyor", "ev"); rec.truth.max = mir("F7", R); rec.truth.peaks = [ts[3], ts[0]].concat(ts.slice(4));
+    },
+    oz: ["Uyanıklıkta tek tük görülen anterior temporal diken-dalga N1'de sıklaşır, N2'de birkaç saniyede bire çıkar; alan genişler ve karşı temporalde bağımsız deşarjlar belirir.",
+      "NREM uykusu fokal ve jeneralize interiktal deşarjları aktive eder, REM baskılar. Temporal lob epilepsisinde iki yanlı bağımsız deşarj oranı uykuda yaklaşık üçte bire çıkar.",
+      "Uyku yoksunluğu hem uykuyu kolaylaştırarak hem de bağımsız olarak verimi artırır; rutin EEG normal olan hastada ikinci basamak uyku ya da uyku yoksunluklu kayıttır."],
+    ipucu: ["Lateralizasyon için REM ve uyanıklıktaki deşarj dağılımı NREM'dekinden daha değerlidir; NREM'de ortaya çıkan karşı taraf deşarjları tek başına bitemporal epilepsi demek değildir.", "Raporda deşarj sıklığını evreye göre ayrı verin."],
+    tuzak: ["Uykuda aynı bölgede wicket, BETS ve verteks dalgaları da artar: 'uykuda ortaya çıktı' bir bulguyu epileptiform yapmaz.", "Yalnız uykuda görülen sentrotemporal ya da oksipital dikenler çocukta nöbet olmadan da bulunur."] });
+
+  S({ id: "u9", grp: "uyk", ad: "Uykuda elektriksel status (ESES / CSWS)", kisa: "ESES", st: "n2", dur: 40, mont: "lb", map: "rms",
+    build: function (rec, R, rng) {
+      background(rec, { spindles: false, vertex: false, level: 0.6 }); var t = rng.r(0.3, 0.9), on = 0, d, first = null, f = rng.r(1.8, 2.4), A = rng.r(150, 200), runs = [];
+      while (t < rec.dur - 2) { d = Math.min(rec.dur - 0.4 - t, rng.r(5, 11)); (function (d) { addGen(rec, rhythm({ dur: d, f: function (x) { return f + 0.25 * Math.sin(x); }, amp: function (x) { return ramp(x, 0, 0.3) * (1 - ramp(x, d - 0.3, d)); }, shape: "sw", jit: 0.06, av: 0.25 }, rng), t, function (nm, p) { return A * (0.6 + (/^(C|T3|T4|F3|F4|Fz)/.test(nm) ? 0.5 : 0)) * (p[0] * (R ? 1 : -1) > 0.1 ? 1.12 : 0.9); }, function (p) { return p[0] * (R ? 1 : -1) > 0.1 ? 0 : 0.014; }); })(d); runs.push([t, t + d]); on += d; if (first == null) first = t; t += d + rng.r(0.4, 1.4); }
+      var swi = Math.round(100 * on / rec.dur); runs.forEach(function (r, i) { mark(rec, r[0], r[1], i ? "diken-dalga" : "süreğen diken-dalga · bu kayıtta indeks ≈ %" + swi, "ied"); }); rec.truth.peaks = [first + 1.2]; rec.truth.swi = swi;
+    },
+    oz: ["NREM uykusunda neredeyse kesintisiz, 1,5–2,5 Hz, yaygın ya da iki yanlı sentrotemporal/frontal baskın diken-dalga; uyku ögeleri seçilmez. Uyanıklıkta ve REM'de deşarjlar belirgin azalır ve fokalleşir.",
+      "Diken-dalga indeksi: NREM süresinin diken-dalga içeren yüzdesi. Klasik tanım %85 ve üzeridir; güncel uygulamada %50 üstü, klinik gerileme eşlik ediyorsa anlamlı kabul edilir.",
+      "Elektroklinik çerçeve: uykuda diken-dalga aktivasyonlu gelişimsel ve/veya epileptik ensefalopati (DEE-SWAS, EE-SWAS); Landau-Kleffner'de aktivasyon temporal ağırlıklıdır. Nöbetler seyrek olabilir, sorun bilişsel ve dil gerilemesidir."],
+    ipucu: ["İndeksi ilk NREM döngüsünde hesaplayın ve yöntemi raporda belirtin (saniye sayımı ya da diken içeren epok yüzdesi).", "Öncü hemisferi 5 saniyelik sayfada homolog kanalların tepe zamanından arayın: tek taraflı yapısal lezyon (talamik hasar, polimikrogiri) sık nedendir."],
+    tuzak: ["Rutin uyanıklık EEG'si yanıltıcı ölçüde sakin olabilir: gerileme gösteren çocukta uyku kaydı olmadan dışlanmaz.", "Kendini sınırlayan sentrotemporal dikenli epilepside de uykuda belirgin aktivasyon olur; ESES demek için süreklilik ve klinik gerileme aranır."] });
+
+  S({ id: "u10", yan: false, grp: "uyk", ad: "Jeneralize paroksismal hızlı aktivite (uykuda)", kisa: "Jeneralize paroksismal hızlı aktivite", st: "n2", dur: 40, mont: "lb", map: "rms",
+    build: function (rec, R, rng) {
+      background(rec, { level: 0.8, vertex: false }); slowBg(rec, 7); var ts = [rng.r(6, 9), rng.r(22, 27)], tsw = rng.r(13, 16); rec.truth.peaks = [];
+      ts.forEach(function (t, j) { var d = rng.r(3, 6), f0 = rng.r(17, 20), f1 = rng.r(11, 13), A = rng.r(70, 105);
+        if (j === 1) { addGen(rec, rhythm({ dur: 2.6, f: 2, amp: function (x) { return ramp(x, 0, 0.3) * (1 - ramp(x, 2.2, 2.6)); }, shape: "sw", jit: 0.08, av: 0.3 }, rng), t - 2.6, wK(W_F, 170)); mark(rec, t - 2.6, t, "yavaş diken-dalga", "ied"); }
+        addGen(rec, rhythm({ dur: d, f: function (x) { return f0 + (f1 - f0) * x / d; }, amp: function (x) { return ramp(x, 0, 0.25) * (0.75 + 0.25 * x / d) * (1 - ramp(x, d - 0.3, d)); }, shape: "sharp", jit: 0.05, av: 0.2 }, rng), t, wK(W_F, A));
+        attenuate(rec, wAll(0.6), function (x) { return 1 - ramp(x, t - 0.1, t + 0.3) * (1 - ramp(x, t + d, t + d + 1.5)); }); mark(rec, t, t + d, "jeneralize paroksismal hızlı aktivite", "ikt"); rec.truth.peaks.push(t + 0.8); });
+      addGen(rec, rhythm({ dur: 3.4, f: rng.r(1.8, 2.3), amp: function (x) { return ramp(x, 0, 0.3) * (1 - ramp(x, 3, 3.4)); }, shape: "sw", jit: 0.08, av: 0.3 }, rng), tsw, wK(W_F, 180)); mark(rec, tsw, tsw + 3.4, "yavaş diken-dalga (1,5–2,5 Hz)", "ied");
+    },
+    oz: ["Aniden başlayan, 10–25 Hz, iki yanlı senkron, frontal baskın, 50–200 µV ritmik hızlı aktivite patlamaları; birkaç saniye sürer, başlangıçta zemin baskılanır. Önünde ya da ardında yavaş diken-dalga bulunabilir.",
+      "Hemen yalnız NREM uykusunda görülür. Lennox-Gastaut sendromunun yavaş diken-dalga ile birlikte ana EEG bulgusudur; başka ağır jeneralize ve multifokal epilepsilerde de görülür.",
+      "Kısa patlamalar çoğu kez klinik bulgu vermez; 5 saniyeyi aşanlar genellikle tonik nöbettir. Klinik bulgu silik olabilir: gözlerin yavaşça açılması, yukarı deviasyon, apne, bradikardi."],
+    ipucu: ["Her patlamada videoda göz kapaklarına ve solunuma bakın; teknisyen notu yoksa tonik nöbetler atlanır.", "İğcikten ayrım: daha hızlı ya da değişken frekans, frontal maksimum, daha yüksek genlik, ani başlangıç-bitiş ve çevresinde yavaş diken-dalga."],
+    tuzak: ["Benzodiazepin betası ve 'aşırı iğcikler' (extreme spindles) süreklidir, paroksismal değildir.", "Yaygın kas artefaktı da ani ve hızlıdır ama düzensizdir, temporal ve frontopolar elektrotlarda en yüksektir ve tek tek kanallarda farklı görünür."] });
+
+  S({ id: "u11", grp: "uyk", ad: "Uykudan kalkan hipermotor frontal nöbet", kisa: "Uykuyla ilişkili hipermotor nöbet", st: "n2", dur: 60, page: 20, mont: "lb", map: "rms",
+    build: function (rec, R, rng) {
+      background(rec, { spindles: false, vertex: false }); var ta = rng.r(16, 20), D = rng.r(22, 32), fm = rng.r(1.6, 2.4), g = mkSrc(rec, mv(dir("F3", "Fz", 0.5), R), 0.5, null, "başlangıç"), gc = gain(mv(dir("F4", "Fz", 0.5), R), 0.5), i;
+      n2Events(rec, 1, ta - 1, {}); n2Events(rec, ta + D + 9, rec.dur, {}); kOnly(rec, ta - 0.6, 170);
+      attenuate(rec, wAll(0.85), function (t) { return 1 - ramp(t, ta - 0.2, ta + 0.3) * (1 - ramp(t, ta + D, ta + D + 8)); });
+      var w = rhythm({ dur: 5, f: function (x) { return 23 - 1.8 * x; }, amp: function (x) { return (7 + 4 * x) * (1 - ramp(x, 4, 5)); }, jit: 0.06 }, rng); add(rec, g, w, ta); add(rec, gc, w, ta + 0.01, 0.7);
+      emg(rec, ta + 2.2, D - 2.2, ALLN.concat(["A1", "A2"]), 75, function (x) { return ramp(x, 0, 1.2) * (0.55 + 0.45 * Math.sin(2 * Math.PI * fm * x)) * (1 - ramp(x, D - 2.6, D - 2.2)); });
+      ALLN.forEach(function (nm) { if (rng.u() < 0.75) { var n = Math.round((D - 3) * FS), x = pink(n, rng, [1, 0.5, 0, 0]); for (i = 0; i < n; i++) x[i] *= ramp(i / FS, 0, 1.5) * (1 - ramp(i / FS, D - 3.6, D - 3)); addTo(rec.ev, oneHot(nm), x, ta + 3, rng.r(40, 130)); } });
+      blink(rec, ta + D + 1.2, 140); blink(rec, ta + D + 3, 120);
+      mark(rec, ta - 0.6, ta + 2.5, "uyanma, yaygın düzleşme, frontal düşük voltajlı hızlı", "ikt"); mark(rec, ta + 2.5, ta + D, "hareket ve kas artefaktı: EEG okunamıyor", "art"); mark(rec, ta + D, Math.min(rec.dur, ta + D + 8), "ani bitiş, postiktal yavaşlama yok", "ikt");
+      rec.truth.onset = ta; rec.truth.end = ta + D; rec.truth.peaks = [ta + 1]; rec.truth.max = mir("F3", R);
+    },
+    oz: ["N2'den ani uyanma, ardından yaygın voltaj düşüşü ve frontal düşük voltajlı hızlı aktivite; birkaç saniye içinde yoğun kas ve hareket artefaktı kaydı kaplar. Nöbet kısa sürer (çoğu 2 dakikanın altında), aniden biter, postiktal yavaşlama azdır ya da yoktur.",
+      "Mesial ve orbitofrontal başlangıçlı nöbetlerde skalp EEG'si iktal ritmi sıklıkla göstermez: kaynak derin ve tanjansiyeldir, kayıt artefaktla örtülür. Normal iktal EEG tanıyı dışlamaz.",
+      "Tanıyı taşıyan semiyolojidir: stereotipi, kısa süre, gece içinde kümelenme, hipermotor ya da asimetrik tonik postür, korunmuş farkındalık."],
+    ipucu: ["Artefakt başlamadan önceki ilk 2–3 saniyeye ve bitişten hemen sonrasına bakın; HFF'yi 15 Hz'e indirip altta ritmik aktivite arayın, ama filtrelenmiş kasın 'beta' gibi görüneceğini unutmayın.", "NREM parasomnisinden ayrım: parasomni N3'ten, gecenin ilk üçte birinde, gece başına bir-iki kez, uzun ve değişken; hipermotor nöbet N2'den, her saatte, kısa ve stereotipik."],
+    tuzak: ["Artefakt altında EEG 'normal' görünür ve olay psikojen diye raporlanır.", "Sıradan arousal ile başlangıç aynıdır (K kompleksi, hızlanma): ayıran ardından gelen stereotipik motor örüntüdür."] });
+
+  // ----- Hiperventilasyon
+  // Envelope (0..1, record-long) of hypersynchronous slowing: bursts from a0 that merge by a1, stay until b0, break up and vanish by b1.
+  function hvEnv(rec, a0, a1, b0, b1) {
+    var rng = rec.rng, e = new Float32Array(rec.n), t = a0, fr, d, lv, i, s0, s1, x, v;
+    while (t < b1) {
+      fr = t < a1 ? (t - a0) / Math.max(1e-6, a1 - a0) : t < b0 ? 1 : 1 - (t - b0) / Math.max(1e-6, b1 - b0); fr = Math.max(0, Math.min(1, fr));
+      d = 1.3 + 3 * fr + rng.r(0, 1.2); lv = 0.5 + 0.5 * fr; s0 = Math.round(t * FS); s1 = Math.round((t + d) * FS);
+      for (i = Math.max(0, s0); i < Math.min(rec.n, s1); i++) { x = i / FS; v = lv * ramp(x, t, t + 0.5) * (1 - ramp(x, t + d - 0.5, t + d)); if (v > e[i]) e[i] = v; }
+      t += fr >= 0.999 ? d - 0.5 : d + (1 - fr) * rng.r(1.5, 4.5);
+    }
+    return e;
+  }
+  // o: { a0, a1, b0, b1, f0, f1, amp, wf, k (0..1 notching), irr }
+  function hvSlow(rec, o) {
+    var e = hvEnv(rec, o.a0, o.a1, o.b0, o.b1), fx = pw([[o.a0, o.f0], [o.a1, 0.5 * (o.f0 + o.f1)], [o.b0, o.f1], [o.b1, o.f0]]);
+    var w = rhythm({ dur: rec.dur, f: fx, amp: 1, shape: "sin", shape2: "notch", k: o.k || 0, jit: o.irr ? 0.14 : 0.06, av: o.irr ? 0.4 : 0.2 }, rec.rng), i; for (i = 0; i < w.length; i++) w[i] *= e[i];
+    addGen(rec, w, 0, wK(o.wf, o.amp, o.R, o.ips, o.con)); return e;
+  }
+  var HV_NOT = "Kayıt gerçek zamanlıdır: HV'nin son bölümünü ve sonrasını gösterir. Teknisyen notları (HV başlangıcı, bitişi, hastanın yanıtı) trasenin üstünde yazılıdır.";
+
+  S({ id: "h1", yan: false, grp: "akt", ad: "HV: normal hipersenkron yavaşlama (erişkin)", kisa: "HV: normal yavaşlama, frontal", st: "ec", dur: 120, page: 20, mont: "lb", map: "rms",
+    build: function (rec, R, rng) {
+      background(rec, {}); var te = rng.r(56, 62), off = rng.r(25, 45), a0 = rng.r(5, 9);
+      note(rec, 0.4, "HV 2. dakika"); note(rec, te, "HV bitti (3 dk)"); note(rec, te + 60, "HV sonrası 1. dk");
+      hvSlow(rec, { a0: a0, a1: a0 + rng.r(18, 24), b0: te + 4, b1: te + off, f0: 5.5, f1: rng.r(2.7, 3.3), amp: rng.r(50, 75), wf: W_F });
+      mark(rec, a0, a0 + 20, "teta-delta patlamaları birleşiyor", "var"); mark(rec, a0 + 22, te, "frontal baskın ritmik delta", "var"); mark(rec, te, te + off, "çözülme: " + Math.round(off) + " s", "var"); rec.truth.peaks = [a0 + 30];
+    },
+    oz: ["İki yanlı, senkron, simetrik teta ve ardından delta: önce tek tek ya da kısa patlamalar halinde keskin konturlu yavaş dalgalar, HV sürdükçe birleşip düzenli ritme döner ve yavaşlar (en yavaş 1,5–4 Hz). Erişkinde frontal baskındır ve FIRDA'dan morfolojiyle ayrılamaz.",
+      "HV bitince çoğunlukla 1 dakika içinde çözülür. 90 saniyeden uzun sürmesi anormaldir; hipoglisemi, yetersiz dinlenme ve hastanın derin solumayı sürdürmesi sorgulanır.",
+      "Mekanizma hipokapni, serebral vazokonstriksiyon ve kan akımı azalmasıdır. Yanıtı büyüten etkenler: genç yaş, iyi efor, dik oturuş, düşük kan şekeri (80 mg/dL altı kolaylaştırır, 120 üstü baskılar)."],
+    ipucu: ["Simetrik olduğu sürece, derecesi ne olursa olsun normaldir; yalnız HV dönemiyle sınırlı FIRDA da normal bulgudur. Anormal sayılanlar: epileptiform deşarj, fokal ya da lateralize değişiklik, 90 saniyeyi aşan süre, yeniden ortaya çıkış.", HV_NOT],
+    tuzak: ["Göz kırpma titreşimi ve frontal kas potansiyelleri yavaş dalgaların üzerine binince diken-dalga izlenimi doğar.", "Kontrendikasyonlar: yakın zamanlı inme ya da intrakraniyal kanama, ciddi kardiyak ya da pulmoner hastalık, büyük damar darlığı, moyamoya, orak hücre hastalığı ya da taşıyıcılığı; gebelikte dikkat."] });
+
+  S({ id: "h2", yan: false, grp: "akt", ad: "HV: çocuk tipi yanıt (posterior başlangıç, yüksek genlik)", kisa: "HV: normal yavaşlama, posterior (çocuk)", st: "ec", dur: 120, page: 20, mont: "lb", map: "rms",
+    build: function (rec, R, rng) {
+      background(rec, { alpha: rng.r(8.6, 9.6) }); var te = rng.r(52, 58), off = rng.r(40, 60), a0 = rng.r(3, 5), A = rng.r(140, 190);
+      note(rec, 0.4, "HV 2. dakika"); note(rec, te, "HV bitti (3 dk)"); note(rec, te + 60, "HV sonrası 1. dk");
+      hvSlow(rec, { a0: a0, a1: a0 + rng.r(9, 13), b0: te + 6, b1: te + off, f0: 4.5, f1: rng.r(2.3, 2.8), amp: A, wf: function (nm, p) { return 0.5 * (W_P(nm, p) + 0.75); } });
+      hvSlow(rec, { a0: a0 + 22, a1: a0 + 34, b0: te + 2, b1: te + off + 8, f0: 3.4, f1: 2.6, amp: 0.45 * A, wf: W_F });
+      mark(rec, a0, a0 + 12, "ani başlangıç, posterior", "var"); mark(rec, a0 + 12, te, "yaygın yüksek genlikli delta", "var"); mark(rec, te, te + off, "çözülme: " + Math.round(off) + " s", "var"); rec.truth.peaks = [a0 + 20];
+    },
+    oz: ["Çocukta yavaşlama erişkine göre çok daha ani başlar, daha yavaştır, genliği 500 µV'a ulaşabilir ve posterior bölgelerden başlayıp öne yayılır.",
+      "En belirgin yanıt 8–12 yaş arasındadır; bu yaşta HV'den sonra daha uzun sürmesi olağandır ve frontal delta bir dakikaya yakın kalabilir.",
+      "Rutin koşullarda efor ve PCO2 ölçülmediği için yavaşlamanın derecesi, aniliği ve süresi geniş bir normal aralıkta yorumlanır."],
+    ipucu: ["Çocukta paroksismal yavaş patlamalar bile tek başına anormallik kanıtı değildir; kesin anormallik için diken-dalga kompleksi ya da açık fokal/lateralize değişiklik gerekir.", HV_NOT],
+    tuzak: ["Posterior başlangıç OIRDA'ya benzer: OIRDA HV'den bağımsızdır ve uyanıklıkta kendiliğinden gelir.", "Yanıt sırasında hasta sayarken duraklayabilir (bkz. çentikli hipersenkroni sahnesi): diken yoksa absans demeyin."] });
+
+  S({ id: "h3", yan: false, grp: "akt", ad: "HV: 3 Hz diken-dalga ve tipik absans", kisa: "HV ile tetiklenen absans (3 Hz diken-dalga)", st: "ec", dur: 60, page: 20, mont: "lb",
+    build: function (rec, R, rng) {
+      background(rec, { alpha: rng.r(9, 10) }); var ta = rng.r(22, 34), d = rng.r(8, 14), A = rng.r(110, 140);
+      note(rec, 0.4, "HV 1. dakika, sayıyor"); note(rec, ta + 2, "sayma durdu, bakıyor"); note(rec, ta + d + 1.2, "saymaya döndü");
+      hvSlow(rec, { a0: 6, a1: 40, b0: 70, b1: 80, f0: 5.5, f1: 4, amp: 30, wf: W_F });
+      addGen(rec, rhythm({ dur: d, f: pw([[0, 3.7], [1.5, 3.1], [d, 2.6]]), amp: function (x) { return ramp(x, 0, 0.2) * (1 - 0.15 * x / d) * (1 - ramp(x, d - 0.25, d)); }, shape: "psw", shape2: "sw", k: pw([[0, 0.3], [1.2, 1]]), jit: 0.025, av: 0.1 }, rng), ta, wK(W_F, A), function (p) { return 0.006 * (0.9 - p[1]); });
+      mark(rec, ta, ta + d, "3 Hz jeneralize diken-dalga", "ikt"); rec.truth.onset = ta; rec.truth.end = ta + d; rec.truth.peaks = [ta + 1.5];
+    },
+    oz: ["Aniden başlayıp aniden biten, iki yanlı senkron, simetrik, frontosantral maksimum diken-dalga; ilk saniyede 3,5–4 Hz, sonra 3 Hz, sona doğru 2,5 Hz. Öncesi ve sonrası zemin normaldir, postiktal yavaşlama yoktur.",
+      "HV, tedavisiz çocukluk çağı absans epilepsisinde boşalımları ve absansları hemen her hastada ortaya çıkarır; 3 dakikalık iyi eforlu HV'de absans görülmemesi tanıyı zayıflatır.",
+      "1–2 saniyelik boşalım bile sürekli motor görevi bozar; 3 saniye ve üzeri genellikle klinik absanstır (duraklama, bakma, göz kapağı titreşimi, otomatizmalar)."],
+    ipucu: ["HV sırasında hastaya yüksek sesle saydırın ya da boşalım sırasında bir sözcük verip sonra sorun: bilinç değerlendirmesi kayda geçmelidir.", "Dikenin her yavaş dalgaya göre sabit yerde olması, hipersenkron yavaşlamadaki rastlantısal çentiklerden ayırır."],
+    tuzak: ["Tutarlı fokal başlangıç, belirgin asimetri ya da 2,5 Hz'in altına inen düzensiz kompleksler atipik absans ya da sekonder bilateral senkroni yönünde değerlendirilir.", "Fotik stimülasyonla ya da göz kapamayla tetiklenen boşalımlar farklı sendromlara işaret eder (Jeavons, juvenil miyoklonik epilepsi)."] });
+
+  S({ id: "h4", yan: false, grp: "akt", ad: "HV: çentikli hipersenkroni ve yalancı absans", kisa: "HV: çentikli hipersenkroni (yalancı absans)", st: "ec", dur: 100, page: 20, mont: "lb", map: "rms",
+    build: function (rec, R, rng) {
+      background(rec, { alpha: rng.r(9, 10), alphaAmp: 24 }); var te = rng.r(60, 66), a0 = rng.r(6, 10), a1 = a0 + rng.r(14, 20);
+      note(rec, 0.4, "HV 2. dakika, sayıyor"); note(rec, a1 + rng.r(6, 10), "sayma yavaşladı, yanıt gecikiyor"); note(rec, te, "HV bitti (3 dk)"); note(rec, te + rng.r(8, 12), "yanıt normal");
+      hvSlow(rec, { a0: a0, a1: a1, b0: te + 2, b1: te + rng.r(20, 30), f0: 4.5, f1: rng.r(2.6, 3), amp: rng.r(105, 140), wf: W_F, k: 0.4 });
+      mark(rec, a1, te, "yüksek genlikli ritmik delta: çentik var, diken yok", "var"); rec.truth.peaks = [a1 + 8];
+    },
+    oz: ["Yüksek genlikli, ritmik ya da yarı ritmik, yaygın ama anterior baskın delta; olağan HV yavaşlamasından daha yavaş olabilir. Dalgaların üzerinde alfa ve beta bindirmesinden doğan çentikler vardır, diken yoktur.",
+      "Epilepsisi olmayan çocuklarda bu yavaşlama sırasında yanıtsızlık, bakma ve sözel bellekte bozulma görülebilir (HV'ye bağlı yüksek genlikli ritmik yavaşlama ile farkındalık değişikliği; yalancı absans).",
+      "Absanstan farkı: başlangıç ve bitiş kademelidir, HV kesilince söner, kompleksler diken-dalga biçiminde değildir."],
+    ipucu: ["Çentiğin yavaş dalganın tepesine uzaklığını art arda dalgalarda ölçün: değişiyorsa bindirmedir, sabitse diken-dalga kompleksidir. Bir yokuşta birden fazla çentik de bindirme lehinedir.", "HFF'yi 15 Hz'e indirmek çentikleri siler, gerçek dikeni de küçültür: karar için 70 Hz ve 5 saniyelik sayfa kullanın."],
+    tuzak: ["'HV'de bilinç değişikliği oldu' bilgisi tek başına absans demek değildir.", "Tersine, düşük genlikli dikenler yavaş dalganın yükselen kolunda çentik gibi görünebilir: her komplekste aynı yerde duruyorsa ciddiye alın."] });
+
+  S({ id: "h5", grp: "akt", ad: "HV: asimetrik yanıt ve fokal yavaşlama", kisa: "HV: asimetrik yanıt, fokal yavaşlama", st: "ec", dur: 120, page: 20, mont: "lb", map: "rms",
+    build: function (rec, R, rng) {
+      background(rec, {}); var te = rng.r(56, 62), off = rng.r(25, 35), a0 = rng.r(5, 9), names = ["T3", "F7", "T5", "C3"].map(function (n) { return mir(n, R); }), i;
+      note(rec, 0.4, "HV 2. dakika"); note(rec, te, "HV bitti (3 dk)"); note(rec, te + 55, "HV sonrası 1. dk");
+      hvSlow(rec, { a0: a0, a1: a0 + 20, b0: te + 4, b1: te + off, f0: 5.2, f1: 3, amp: rng.r(50, 70), wf: W_F, R: R, ips: 1.35, con: 0.8 });
+      var ef = function (x) { return 0.18 + 0.82 * ramp(x, a0, a0 + 25) * (1 - 0.5 * ramp(x, te + 20, rec.dur)); };
+      names.forEach(function (nm, j) { addTo(rec.ev, gain(dir(nm), 0.45), gateArr(pink(rec.n, rng, [1, 0.35, 0.05, 0]), ef), 0, [36, 30, 26, 15][j]); });
+      attenuate(rec, wNames(names, 0.4), function (x) { return 1 - ramp(x, a0, a0 + 25); });
+      mkSrc(rec, mv(dir("T3"), R), 0.45, null, "hipoperfüzyon / lezyon"); mark(rec, a0 + 20, te, "yavaşlama " + (R ? "sağda" : "solda") + " belirgin", "ev"); mark(rec, te + off, rec.dur - 0.5, "HV sonrası süren fokal polimorfik delta", "ev"); rec.truth.max = mir("T3", R); rec.truth.peaks = [a0 + 32];
+    },
+    oz: ["HV yavaşlaması bir hemisferde tutarlı biçimde daha yüksek genlikli; aynı tarafta temporal polimorfik delta HV ile belirginleşiyor ve iki yanlı yanıt çözüldükten sonra da sürüyor.",
+      "Asimetrinin iki okuması vardır: yavaşlamanın fazla olduğu tarafta iskemi ya da hipoperfüzyon, veya az olduğu tarafta bozulmuş vazoreaktivite. Hangi tarafın anormal olduğunu bazal kayıt söyler.",
+      "HV fokal epilepside epileptiform deşarjı seyrek aktive eder (%10'un altında); fokal yavaşlamayı ve fokal nöbeti nadiren ortaya çıkarır."],
+    ipucu: ["Bazal kayıtta aynı tarafta yavaşlama ya da zemin baskılanması varsa asimetrik HV yanıtı o bulguyu destekler; başka hiçbir asimetri yoksa temkinli raporlayın.", "HV yavaşlamasında yer değiştiren hafif asimetri olağandır; anlamlı olan kayıt boyunca aynı yönde kalan asimetridir."],
+    tuzak: ["Kemik defekti tarafında yanıt daha yüksek görünür.", "Bilinen ciddi karotis darlığında ya da yakın zamanlı inmede HV yaptırılmaz: bu bulguyu aramak için de yaptırılmaz."] });
+
+  S({ id: "h6", yan: false, grp: "akt", ad: "HV sonrası yeniden ortaya çıkan yavaşlama (re-build-up)", kisa: "HV: re-build-up", st: "ec", dur: 200, page: 20, mont: "lb", map: "rms",
+    build: function (rec, R, rng) {
+      background(rec, { alpha: rng.r(8.8, 9.8) }); var te = rng.r(22, 28), o1 = rng.r(20, 28), tr = te + rng.r(55, 75), A = rng.r(95, 130);
+      note(rec, 0.4, "HV son 30 s"); note(rec, te, "HV bitti (3 dk)"); note(rec, te + 60, "HV sonrası 1. dk"); note(rec, te + 120, "2. dk"); if (te + 170 < rec.dur) note(rec, te + 170, "hasta uykulu değil");
+      hvSlow(rec, { a0: -30, a1: -20, b0: te + 3, b1: te + o1, f0: 4.5, f1: 3, amp: rng.r(70, 100), wf: function (nm, p) { return 0.5 * (W_P(nm, p) + W_F(nm, p)); } });
+      hvSlow(rec, { a0: tr, a1: tr + rng.r(25, 35), b0: rec.dur + 20, b1: rec.dur + 40, f0: 3, f1: rng.r(1.5, 2.2), amp: A, wf: W_F, R: R, ips: 1.25, con: 0.85, irr: true });
+      mark(rec, 0.5, te + o1, "ilk yavaşlama çözülüyor", "var"); mark(rec, te + o1, tr, "zemin normale döndü", "ev"); mark(rec, tr, rec.dur - 0.5, "yeniden ortaya çıkan, daha yavaş ve düzensiz delta", "ev"); rec.truth.peaks = [tr + 40];
+    },
+    oz: ["HV'nin olağan yavaşlaması çözülür, zemin normale döner; 20–60 saniye sonra, hasta artık normal solurken, daha yavaş (1–2,5 Hz), daha düzensiz ve çoğu kez asimetrik yüksek genlikli delta yeniden belirir ve dakikalarca sürer.",
+      "Olağan HV yavaşlaması çözüldükten sonra geri gelmez. Yeniden ortaya çıkış moyamoya hastalığı için karakteristiktir; özellikle en yoğun delta HV bitiminden dakikalar sonra ise.",
+      "Mekanizma bozulmuş vazoreaktivitedir: HV sonrası reaktif dönemde kortikal perfüzyon gecikmeli olarak düşer."],
+    ipucu: ["Bu yüzden HV'den sonra kayıt en az 3 dakika sürdürülür; teknisyen HV bitimini ve dakikaları işaretlemelidir.", "Çocukta HV sırasında ya da sonrasında geçici güçsüzlük, uyuşma ya da konuşma bozukluğu olursa test durdurulur ve kayda yazılır."],
+    tuzak: ["Tanı bilinen ya da kuvvetle düşünülen hastada bu bulguyu görmek için HV yaptırılmaz: iskemik atak tetikleyebilir.", "HV sonrası uyuklayan hastadaki teta-delta ile karıştırmayın: uyuklamada alfa dağılır, yavaş göz hareketleri vardır ve uyaranla düzelir."] });
+
+  // ----- Aralıklı fotik stimülasyon
+  var G_OL = null, G_OR = null;
+  function gOcc() { if (!G_OL) { G_OL = gain(dir("O1"), 0.5); G_OR = gain(dir("O2"), 0.5); } }
+  // Occipital response to each flash: surface-positive transient about 100 ms after it. o: { amp, aL, aR, harm, sub }
+  function drive(rec, fl, f, o) {
+    gOcc(); var rng = rec.rng, aL = o.aL == null ? 1 : o.aL, aR = o.aR == null ? 1 : o.aR;
+    fl.forEach(function (t, k) {
+      var a = o.amp * Math.min(1, 0.35 + 0.22 * k) * rng.r(0.85, 1.15) * (o.sub && k % 2 ? 0.3 : 1), w = knots([[0, 0], [0.028, 1], [0.07, -0.3], [0.11, 0]], a);
+      add(rec, G_OL, w, t + 0.072, aL); add(rec, G_OR, w, t + 0.072, aR * 1.08);
+      if (o.harm) { w = knots([[0, 0], [0.024, 1], [0.055, -0.25], [0.08, 0]], a * 0.8); add(rec, G_OL, w, t + 0.072 + 0.5 / f, aL); add(rec, G_OR, w, t + 0.072 + 0.5 / f, aR * 1.08); }
+    });
+  }
+  function driveAmp(f, fa) { return f < 3 ? 0 : 9 + 30 * Math.exp(-Math.pow((f - fa) / 4.5, 2)); }
+  function occAtt(rec, t0, t1, k) { attenuate(rec, wNames(["O1", "O2", "P3", "P4", "T5", "T6"], k == null ? 0.55 : k, 0.1), function (x) { return 1 - ramp(x, t0, t0 + 0.6) * (1 - ramp(x, t1, t1 + 0.6)); }); }
+  // A protocol of trains: fs = [Hz...], each "on" seconds with "off" between; fn(flashTimes, f, t0, index) adds the response. Returns [{t0, t1, f}].
+  function trains(rec, fs, on, off, fn, t0) { var t = t0 == null ? 3 : t0, out = []; fs.forEach(function (f, i) { var fl = flashes(rec, t, on, f); out.push({ t0: t, t1: t + on, f: f, fl: fl }); if (fn) fn(fl, f, t, i); t += on + off; }); return out; }
+  var IFS_NOT = "Trasenin altındaki şerit flaş kanalıdır: her çizgi bir flaş, yanında frekans yazar. Gerçek protokolde her frekans 10 s uygulanır; burada diziler kısaltılmıştır.";
+
+  S({ id: "f1", yan: false, grp: "akt", ad: "Fotik sürüklenme (normal)", kisa: "Fotik sürüklenme: normal", st: "ec", dur: 56, page: 20, mont: "lb",
+    build: function (rec, R, rng) {
+      background(rec, {}); var fa = rec.alphaF, sub = rng.u() < 0.65;
+      var tr = trains(rec, [6, Math.round(fa), 14, 20], 8, 5, function (fl, f, t0, i) { drive(rec, fl, f, { amp: driveAmp(i === 0 ? fa - 1 : i === 3 && sub ? fa : f, fa), harm: i === 0, sub: i === 3 && sub }); if (i !== 1) occAtt(rec, t0, t0 + 8); });
+      mark(rec, tr[0].t0, tr[0].t1, "6 Hz uyarana 12 Hz yanıt (harmonik)", "var"); mark(rec, tr[1].t0, tr[1].t1, "alfa frekansında en yüksek sürüklenme", "var"); mark(rec, tr[2].t0, tr[2].t1, "14 Hz sürüklenme", "var"); mark(rec, tr[3].t0, tr[3].t1, sub ? "20 Hz uyarana 10 Hz yanıt (subharmonik)" : "20 Hz, düşük genlik", "var");
+      rec.truth.max = "O1"; rec.truth.max2 = "O2"; rec.truth.pos = true; rec.truth.peaks = [tr[1].t0 + 2.02];
+    },
+    oz: ["Her flaştan 80–150 ms sonra gelen keskin konturlu, pozitif, monofazik oksipital geçiciler; flaş frekansına kilitli ritim oluşturur. Alan iki yanlı oksipitaldir, posterior temporale taşabilir.",
+      "Yanıt uyaranla aynı frekansta, onun katında (harmonik) ya da yarısında (subharmonik) olabilir. Genlik, uyaran frekansı hastanın alfa frekansına yaklaştıkça artar; 3 Hz'in altındaki uyarana normalde sürüklenme olmaz.",
+      "Stimülasyon bitince anında kesilir. Yokluğu normal varyanttır (özellikle yaşlıda); iki yanlı varlığı ise normal kaydın koşulu değildir."],
+    ipucu: ["Alfa frekansındaki sürüklenmeyi alfanın kendisinden ayıran, dizinin bitişinde anında kesilmesi ve flaş kanalına kilitli olmasıdır.", IFS_NOT],
+    tuzak: ["Harmonik yanıtta tek tek dalgalar diken süresindedir (ör. 12 Hz uyarana 24 Hz): ardıl yavaş dalga yoktur ve uyaranla tam kat ilişkisi vardır.", "Düşük frekanslı uyaranda tek tek yanıtlar lambda ya da oksipital diken gibi görünür; polarite pozitiftir ve aralıklar flaşla aynıdır."] });
+
+  S({ id: "f2", grp: "akt", ad: "Asimetrik fotik sürüklenme", kisa: "Fotik sürüklenme: asimetrik", st: "ec", dur: 45, page: 20, mont: "lb",
+    build: function (rec, R, rng) {
+      background(rec, {}); var fa = rec.alphaF, aff = ["O1", "T5", "P3"].map(function (n) { return mir(n, R); });
+      var tr = trains(rec, [8, Math.round(fa), 14], 8, 5, function (fl, f, t0) { drive(rec, fl, f, { amp: driveAmp(f, fa) * 1.15, aL: R ? 1 : 0.15, aR: R ? 0.15 : 1 }); });
+      attenuate(rec, wNames(aff, 0.6), function () { return 0; }); slowBg(rec, 12, aff); mkSrc(rec, mv(dir("O1", "T5", 0.4), R), 0.55, null, "lezyon");
+      tr.forEach(function (x) { mark(rec, x.t0, x.t1, "sürüklenme " + (R ? "sağda" : "solda") + " yok", "ev"); }); rec.truth.max = mir("O1", !R); rec.truth.pos = true; rec.truth.peaks = [tr[1].t0 + 2.02];
+    },
+    oz: ["Sürüklenme bir oksipital bölgede var, diğerinde yok ya da çok düşük; aynı tarafta alfa da düşük genlikli ve posterior yavaşlama eşlik ediyor.",
+      "Tek yanlı kayıp, yanıtın olmadığı taraftaki lezyonu gösterir (oksipital korteks ya da optik radyasyon). Yalnız genlik farkı varsa hangi tarafın anormal olduğu belli değildir: yıkıcı lezyon düşürür, irritatif lezyon yükseltebilir.",
+      "Sağlıklı kişilerde de sürüklenme tutarlı biçimde bir tarafta (çoğunlukla sağda) daha yüksek olabilir; alfa asimetrisiyle aynı yöndeyse olağandır."],
+    ipucu: ["Sürüklenme asimetrisini tek başına anormal saymayın: aynı tarafta fokal yavaşlama ya da zemin ritimlerinde baskılanma varsa anlam kazanır.", "Teknik nedenleri dışlayın: lambanın ortalanmaması, bakışın lambadan sapması, tek gözün kapalı olması, O1/O2 empedans farkı.", IFS_NOT],
+    tuzak: ["Atipik kalkarin anatomi dipol yönünü değiştirir ve yalancı asimetri yaratır.", "Bipolar montajda O1 ve O2'ye giden kanalların elektrot aralığı eşit değilse genlik farkı montajdandır: O1–O2 ya da referans montaja bakın."] });
+
+  S({ id: "f3", yan: false, grp: "akt", ad: "Fotomiyojenik (fotomiyoklonik) yanıt", kisa: "Fotomiyojenik yanıt", st: "ec", dur: 58, page: 20, mont: "lb",
+    build: function (rec, R, rng) {
+      var fa0 = rng.r(9.3, 10.6), fs = [8, 12, 16, 18], topen = 3 + 3 * 13 + 4, el2 = [["Fp1", 1], ["Fp2", 1], ["F7", 0.5], ["F8", 0.5], ["F3", 0.22], ["F4", 0.22]];
+      background(rec, { alpha: fa0, eyes: [[topen, topen + 7]], blinks: [1.2] }); note(rec, topen, "gözler açıldı"); note(rec, topen + 7, "gözler kapandı");
+      var tr = trains(rec, fs, 8, 5, function (fl, f, t0, i) {
+        drive(rec, fl, f, { amp: driveAmp(f, fa0) * 0.6 });
+        fl.forEach(function (t, k) { if (t >= topen) return; var a = (16 + 3 * f) * Math.min(1, 0.12 + k / (1.4 * f)); el2.forEach(function (e) { var s = rng.u() < 0.5 ? 1 : -1, x = a * e[1] * rng.r(0.55, 1.3); addTo(rec.ev, oneHot(e[0]), knots([[0, 0], [0.01, -s], [0.02, 0.7 * s], [0.03, -0.3 * s], [0.04, 0]], x), t + 0.045 + rng.r(0, 0.008)); }); addTo(rec.ev, G_BLINK, knots([[0, 0], [0.03, 1], [0.07, 0]], 9), t + 0.05); });
+      });
+      tr.forEach(function (x, i) { mark(rec, x.t0, i === 3 ? topen : x.t1, i === 3 ? "göz açılınca kesiliyor" : "flaşa kilitli frontal kas potansiyelleri", "art"); });
+      rec.truth.max = "Fp1"; rec.truth.max2 = "Fp2"; rec.truth.peaks = [tr[1].t0 + 3];
+    },
+    oz: ["Her flaştan 50–60 ms sonra frontopolar ve periorbital elektrotlarda çok kısa, sivri kas potansiyelleri (orbicularis oculi, frontalis). Dizi içinde giderek büyür (rekrütman), flaş frekansı arttıkça genliği artar.",
+      "Son flaşla birlikte anında kesilir; uyaranı aşmaz. Gözler kapalıyken ortaya çıkar, göz açılınca kaybolur. Göz kapağı titreşimi ve baş sarsılması eklenebilir.",
+      "Beyin kaynaklı değildir, epilepsiyle ilişkisi yoktur. Yoğun anksiyete ve alkol ya da ilaç yoksunluğu durumlarında belirginleşir."],
+    ipucu: ["Fotoparoksizmal yanıttan ayıran üç şey: flaşa bire bir kilitli olması, ardıl yavaş dalganın olmaması ve hemen her frekansta görülüp dizinin sonunda bitmesi.", "Alan frontopolar ve çok dik düşüşlüdür; santral elektrotlarda karşılığı yoktur. HFF'yi düşürmek kas potansiyelini diken-dalgaya benzetir.", IFS_NOT],
+    tuzak: ["Fotoparoksizmal yanıtın alanı da sıklıkla frontal maksimumdur ve epileptik miyokloni kendi kas artefaktını üretir: flaşa kilitli değilse ve uyaranı aşıyorsa fotomiyojenik demeyin.", "Yüksek flaş frekansında kas potansiyelleri birleşip frontal 'sürüklenme' gibi görünür: sürüklenme oksipitaldir."] });
+
+  S({ id: "f4", yan: false, grp: "akt", ad: "Fotoparoksizmal yanıt: jeneralize, uyaranı aşan", kisa: "Fotoparoksizmal yanıt: jeneralize", st: "ec", dur: 44, page: 20, mont: "lb",
+    build: function (rec, R, rng) {
+      background(rec, {}); var fa = rec.alphaF, t1 = 3, t2 = 16, ts = t2 + rng.r(1.4, 2.4), stop = ts + rng.r(1.2, 1.9), d = rng.r(4.8, 7), A = rng.r(110, 140);
+      drive(rec, flashes(rec, t1, 8, 10), 10, { amp: driveAmp(10, fa) }); drive(rec, flashes(rec, t2, stop - t2, 16), 16, { amp: driveAmp(16, fa) });
+      note(rec, t2 - 0.6, "gözler kapatıldı"); note(rec, stop, "stimülasyon durduruldu"); note(rec, ts + rng.r(0.8, 1.4), "göz kapağı ve omuz sıçraması");
+      addGen(rec, rhythm({ dur: d, f: pw([[0, 4.3], [1.5, 3.5], [d, 2.8]]), amp: function (x) { return ramp(x, 0, 0.25) * (1 - 0.2 * x / d) * (1 - ramp(x, d - 0.3, d)); }, shape: "psw", shape2: "sw", k: pw([[0, 0], [d, 0.9]]), jit: 0.05, av: 0.2 }, rng), ts, wK(W_F, A), function (p) { return 0.006 * (0.9 - p[1]); });
+      mark(rec, t1, t1 + 8, "10 Hz: yalnız sürüklenme", "var"); mark(rec, ts, ts + d, "jeneralize çoklu diken-dalga, uyarandan " + fmt(ts + d - stop, 1) + " s uzun", "ikt"); rec.truth.onset = ts; rec.truth.end = ts + d; rec.truth.peaks = [ts + 0.9];
+    },
+    oz: ["Stimülasyon sırasında başlayan jeneralize diken-dalga ya da çoklu diken-dalga; iki yanlı senkron, simetrik, çoğu kez frontosantral maksimum. Frekansı flaş frekansından düşüktür ve onunla kat ilişkisi yoktur (burada 4 Hz'den 3 Hz'e yavaşlıyor).",
+      "Waltz sınıflamasında tip 4'tür: 1 oksipital ritim içinde dikenler, 2 pariyeto-oksipital dikenler ve bifazik yavaş dalga, 3 bunun frontale yayılması, 4 jeneralize diken-dalga ya da çoklu diken-dalga.",
+      "En sık 15–18 Hz flaşla ortaya çıkar (gözler açıkken 15, kapalıyken 20 Hz en etkili); göz kapama anı en duyarlı andır. Genetik jeneralize epilepsilerle, en çok juvenil miyoklonik epilepsiyle ilişkilidir."],
+    ipucu: ["Jeneralize boşalım görüldüğü anda stimülasyon durdurulur ve o frekans tekrarlanmaz: uyaran sürdürülürse eşik düşer, miyokloni ve jeneralize tonik-klonik nöbet gelişebilir.", "Raporda yanıtın tipi, ortaya çıktığı frekans aralığı (alt ve üst eşik), uyaranı aşıp aşmadığı ve klinik eşlikçi yazılır.", IFS_NOT],
+    tuzak: ["Nöbeti olmayan kişide de görülebilir (sağlıklı erişkinde yaklaşık %0,5, ergenlikte daha sık; kalıtsal özellik): tek başına epilepsi tanısı koydurmaz. Uyaranı aşan yanıtın epilepsiyle daha güçlü ilişkili olduğu görüşü tartışmalıdır.", "Jeneralize yanıtların dörtte üçüne yakını epilepsili kişilerdedir; yalnız oksipitalle sınırlı yanıtlarda bu oran daha düşüktür."] });
+
+  S({ id: "f5", yan: false, grp: "akt", ad: "Fotoparoksizmal yanıt: posterior, uyaranla sınırlı", kisa: "Fotoparoksizmal yanıt: posterior", st: "ec", dur: 45, page: 20, mont: "lb",
+    build: function (rec, R, rng) {
+      background(rec, {}); var fa = rec.alphaF, wf = function (nm, p) { return (p[1] < -0.55 ? 1.3 : p[1] < -0.1 ? 0.62 : 0.1) * (p[0] * (R ? 1 : -1) > 0.1 ? 1.1 : 0.92); };
+      var tr = trains(rec, [10, 14, 18], 8, 5, function (fl, f, t0, i) {
+        drive(rec, fl, f, { amp: driveAmp(f, fa) * (i ? 0.7 : 1) }); if (!i) return;
+        var a = t0 + rng.r(0.9, 1.6), d = t0 + 8 - a - rng.r(0.1, 1.2), A = rng.r(95, 135);
+        addGen(rec, rhythm({ dur: d, f: rng.r(3.4, 4.4), amp: function (x) { return ramp(x, 0, 0.4) * (1 - ramp(x, d - 0.3, d)); }, shape: "sw", jit: 0.1, av: 0.3 }, rng), a, function (nm, p) { return A * wf(nm, p); });
+        mark(rec, a, a + d, "pariyeto-oksipital diken-dalga, uyaranla sınırlı", "ied"); rec.truth.peaks = (rec.truth.peaks || []).concat([a + 0.8]);
+      });
+      mark(rec, tr[0].t0, tr[0].t1, "10 Hz: yalnız sürüklenme", "var"); rec.truth.max = "O1"; rec.truth.max2 = "O2";
+    },
+    oz: ["Stimülasyon sırasında iki yanlı pariyeto-oksipital dikenler ve onları izleyen yavaş dalgalar; frontale yayılmıyor ve dizinin bitişiyle ya da daha önce sönüyor (Waltz tip 2; frontale taşarsa tip 3).",
+      "Sürüklenmeden farkı: polarite negatif, her dikenin ardında yavaş dalga var, yineleme hızı flaş frekansından düşük ve onunla kat ilişkisi yok.",
+      "Posterior ve uyaranla sınırlı yanıtların epilepsiyle ilişkisi jeneralize yanıtlardan zayıftır. Tek yanlı oksipital yanıt nadirdir ve aynı taraf yapısal lezyon ya da oksipital lob epilepsisi yönünde değerlendirilir."],
+    ipucu: ["Yanıtı ortaya çıkaran en düşük ve en yüksek frekansı bulun: duyarlılık aralığı genişledikçe klinik önem artar.", "Aynı yanıt gözler açık, kapalı ve göz kapama anında ayrı ayrı denenir.", IFS_NOT],
+    tuzak: ["Harmonik sürüklenmenin sivri dalgalarını tip 1 yanıt diye raporlamayın.", "Uyku sırasında yapılan düşük frekanslı stimülasyonda oksipital yanıtlar yüksek genlikli ve diken-dalga biçimli olabilir: evreyi not edin."] });
+
+  S({ id: "f6", grp: "akt", ad: "Fotoelektrik artefakt (elektrot)", kisa: "Fotoelektrik artefakt", st: "ec", dur: 45, page: 20, mont: "lb",
+    build: function (rec, R, rng) {
+      background(rec, {}); var fa = rec.alphaF, e0 = mir(rng.pick(["Fp1", "Fp1", "F7", "F3"]), R), A = rng.r(45, 70);
+      var tr = trains(rec, [2, 8, 14], 8, 5, function (fl, f) { drive(rec, fl, f, { amp: driveAmp(f, fa) }); fl.forEach(function (t) { addTo(rec.ev, oneHot(e0), knots([[0, 0], [0.005, -1], [0.015, 0.45], [0.03, 0]], A * rng.r(0.93, 1.07)), t); }); });
+      tr.forEach(function (x) { mark(rec, x.t0, x.t1, "flaşla eşzamanlı, tek elektrot", "art"); }); rec.truth.max = e0; rec.truth.art = true; rec.truth.peaks = [tr[0].t0 + 2];
+    },
+    oz: ["Her flaşla aynı anda (gecikmesiz), tek bir elektrotta, sabit genlikli ve sivri potansiyel: ışığın yüksek empedanslı elektrot yüzeyinde oluşturduğu fotoelektrik (fotovoltaik) etki. En sık frontopolar elektrotlarda, 1–2 Hz dahil her frekansta görülür.",
+      "Alanı yoktur: komşu elektrotlarda karşılığı bulunmaz. Elektrotun üstü opak bir bezle kapatılınca kaybolur; empedans düzeltilince de kaybolur.",
+      "Elektroretinogram da frontopolardır ama iki yanlıdır, düşük genliklidir, flaşı kısa bir gecikmeyle izler, elektrot kapatılınca sürer (göz kapatılınca kaybolur) ve yüksek flaş frekansında yorulur."],
+    ipucu: ["Gecikmeye bakın: 0 ms elektrot, yaklaşık 20–50 ms retina, 50–60 ms kas, 80–150 ms oksipital korteks.", "Yanıt 2 Hz flaşta da aynı biçimde sürüyorsa beyin kaynaklı sürüklenme değildir.", IFS_NOT],
+    tuzak: ["Tek frontal elektrotta flaşa kilitli 'diken' fokal fotoparoksizmal yanıt diye raporlanabilir: fokal yanıt nadirdir ve oksipitaldir.", "Fotomiyojenik yanıt iki yanlıdır, dizi içinde büyür ve gecikmelidir."] });
+
+  S({ id: "f7", yan: false, grp: "akt", ad: "Düşük frekanslı uyarana dev oksipital yanıt", kisa: "Düşük frekanslı flaşa oksipital dikenler", st: "eo", dur: 45, page: 20, mont: "lb",
+    build: function (rec, R, rng) {
+      background(rec, { alphaAmp: 5, noBlink: true, level: 0.8 }); slowBg(rec, 10); gOcc(); var A = rng.r(160, 230), gO = gain(dir("O1", "O2"), 0.42);
+      var tr = trains(rec, [1, 2, 10], 9, 5, function (fl, f) {
+        if (f > 3) { drive(rec, fl, f, { amp: 6 }); return; }
+        fl.forEach(function (t) { var tp = spikeTpl({ amp: A * rng.r(0.85, 1.15), dur: 0.07, slow: 0.6, slowDur: 0.32, pre: 0.25 }); add(rec, gO, tp.w, t + 0.085 - tp.peak); add(rec, G_OL, tp.w, t + 0.085 - tp.peak, R ? 0.25 : 0.4); add(rec, G_OR, tp.w, t + 0.085 - tp.peak, R ? 0.4 : 0.25); });
+      });
+      mark(rec, tr[0].t0, tr[0].t1, "1 Hz: her flaşa oksipital diken-dalga", "ied"); mark(rec, tr[1].t0, tr[1].t1, "2 Hz: bire bir yanıt", "ied"); mark(rec, tr[2].t0, tr[2].t1, "10 Hz: belirgin sürüklenme yok", "ev"); rec.truth.max = "O1"; rec.truth.max2 = "O2"; rec.truth.peaks = [tr[0].t0 + 2.085];
+    },
+    oz: ["1–3 Hz flaşların her birini izleyen yüksek genlikli oksipital diken ya da diken-dalga; zemin yavaş ve düzensiz, alfa frekansındaki uyarana ise belirgin sürüklenme yok.",
+      "Normalde 3 Hz'in altındaki uyarana sürüklenme beklenmez. Bu yanıt dejeneratif ensefalopatilerle ilişkilidir: geç infantil nöronal seroid lipofusinoz (CLN2) için karakteristiktir; progresif miyoklonik epilepsilerde, mitokondriyal hastalıkta ve prion hastalığında da bildirilmiştir.",
+      "Aynı hastalarda dev görsel ve somatosensoriyel uyarılmış potansiyeller eşlik eder: kortikal hipereksitabilitenin göstergesidir."],
+    ipucu: ["Gerileme, miyokloni ya da görme kaybı olan çocukta fotik protokole mutlaka 1–3 Hz basamakları ekletin: standart protokoller çoğu kez daha yüksek frekanstan başlar.", IFS_NOT],
+    tuzak: ["Uykuda düşük frekanslı flaşa K kompleksi ve yüksek genlikli oksipital yanıt normal olabilir: bulgu uyanıklıkta aranır.", "Tek elektrotta ve gecikmesiz ise fotoelektrik artefakttır."] });
+
+  // ----- I. Normal uyanıklık ve yaşa göre bulgular; J. Artefaktlar
+  // One run of a rhythm over the whole head. o: { f, A, wf, shape, shape2, k, jit, av, edge, lagf }
+  function run(rec, t, d, o) { var e = o.edge == null ? Math.min(0.5, d / 4) : o.edge; addGen(rec, rhythm({ dur: d, f: o.f, amp: function (x) { return ramp(x, 0, e) * (1 - ramp(x, d - e, d)); }, shape: o.shape, shape2: o.shape2, k: o.k, jit: o.jit, av: o.av }, rec.rng), t, wK(o.wf || W_F, o.A, o.R, o.ips, o.con), o.lagf); }
+  function occRun(rec, t, d, f, A, shape, kL, kR) { var e = Math.min(0.5, d / 4), w = rhythm({ dur: d, f: f, amp: function (x) { return A * ramp(x, 0, e) * (1 - ramp(x, d - e, d)); }, shape: shape || "sin", jit: 0.04 }, rec.rng); [["O1", 0.95, kL], ["O2", 1.05, kR], ["P3", 0.36, kL], ["P4", 0.4, kR], ["T5", 0.3, kL], ["T6", 0.34, kR]].forEach(function (s) { add(rec, gain(dir(s[0]), 0.5), w, t, s[1] * (s[2] == null ? 1 : s[2])); }); }
+  var POST = ["O1", "O2", "P3", "P4", "T5", "T6"];
+
+  S({ id: "n1", yan: false, grp: "nor", ad: "Posterior baskın ritim ve reaktivite", kisa: "Posterior baskın ritim, reaktivite", st: "ec", dur: 40, mont: "lb", map: "rms",
+    build: function (rec, R, rng) {
+      var to = rng.r(12, 15), tc = to + rng.r(6, 8); background(rec, { eyes: [[to, tc]], blinks: [rng.r(3, 6), to + 0.15, to + rng.r(2, 3), to + rng.r(4.3, 5.2), tc + 0.1] });
+      note(rec, to, "gözler açıldı"); note(rec, tc, "gözler kapandı"); var w = rhythm({ dur: 1.3, f: function (x) { return rec.alphaF + 1.6 * (1 - x / 1.3); }, amp: function (x) { return 20 * ramp(x, 0.3, 0.6) * (1 - ramp(x, 0.9, 1.3)); } }, rng); add(rec, gain(dir("O1"), 0.5), w, tc + 0.3); add(rec, gain(dir("O2"), 0.5), w, tc + 0.3, 1.1);
+      mark(rec, to, tc, "göz açmayla baskılanma", "var"); mark(rec, tc + 0.3, tc + 1.6, "alfa 'squeak': kısa süre daha hızlı", "var"); rec.truth.peaks = [to - 3]; rec.truth.max = "O1"; rec.truth.max2 = "O2";
+    },
+    oz: ["Erişkinde 8,5–13 Hz, oksipital maksimum, genliği artıp azalan sinüzoidal ritim; gözler kapalı gevşek uyanıklıkta en belirgin, göz açma ve zihinsel çabayla baskılanır. 8 yaşından sonra 8 Hz'in altı anormaldir; erişkinde 8,5 Hz'in altı yavaş kabul edilir.",
+      "Genlik sağda çoğunlukla daha yüksektir; %50'ye kadar fark olağandır, sol tarafın %35'ten fazla yüksek olması ya da 1 Hz'i aşan frekans farkı anlamlıdır. Düşük ya da yavaş olan taraf anormal taraftır.",
+      "Göz kapamadan hemen sonraki 0,5–1 saniyede frekans geçici olarak yüksektir ('squeak'): frekans ölçümü bu bölümde yapılmaz."],
+    ipucu: ["Frekansı uyanık, gözler kapalı ve uyaran sonrası en iyi bölümde ölçün; uyuklamadaki yavaş alfa yanlış 'yavaş zemin' yorumuna götürür.", "Reaktivite her kayıtta belgelenmelidir: göz açma-kapama, gerekirse zihinsel hesap."],
+    tuzak: ["Alfanın hiç görülmemesi tek başına anormal değildir (bkz. düşük voltajlı EEG).", "Bipolar montajda P3–O1 ve P4–O2 genlik farkı elektrot aralığından doğabilir: asimetriyi referans montajda doğrulayın."] });
+
+  function alphaVar(id, ad, kisa, mult, shape, A, oz, ipucu, tuzak) {
+    S({ id: id, yan: false, grp: "nor", ad: ad, kisa: kisa, st: "ec", dur: 34, mont: "lb", map: "rms",
+      build: function (rec, R, rng) {
+        var to = rng.r(25, 27), t = rng.r(2, 4), d; background(rec, { eyes: [[to, to + 5]], blinks: [to + 0.15, to + 2.4] }); note(rec, to, "gözler açıldı"); rec.truth.peaks = [];
+        while (t < to - 3) { d = Math.min(to - 0.4 - t, rng.r(2.5, 5.5)); occRun(rec, t, d, rec.alphaF * mult, A * rng.r(0.85, 1.15), shape); attenuate(rec, wNames(POST, mult < 1 ? 0.75 : 0.45, 0), (function (a, b) { return function (x) { return 1 - ramp(x, a, a + 0.5) * (1 - ramp(x, b - 0.5, b)); }; })(t, t + d)); mark(rec, t, t + d, kisa + " (" + fmt(rec.alphaF * mult, 1) + " Hz)", "var"); rec.truth.peaks.push(t + d / 2); t += d + rng.r(2, 4.5); }
+        rec.truth.max = "O1"; rec.truth.max2 = "O2";
+      }, oz: oz, ipucu: ipucu, tuzak: tuzak });
+  }
+  alphaVar("n2", "Yavaş alfa varyantı (subharmonik)", "Yavaş alfa varyantı", 0.5, "notch", 34,
+    ["Posterior, 4–5 Hz, çoğu kez çentikli ritim; alfanın tam yarı frekansındadır ve onunla dönüşümlü görülür. Dağılımı ve reaktivitesi alfayla aynıdır: göz açınca baskılanır.", "Erişkinde seyrek bir normal varyanttır; gevşek uyanıklıkta ortaya çıkar, uyuklamayla ilişkisi yoktur."],
+    ["Frekansı ölçün: aynı kayıttaki alfanın yarısıysa ve göz açmayla alfa gibi kayboluyorsa varyanttır.", "Çentik, iki alfa dalgasının kaynaşmasından doğar; 5 saniyelik sayfada görülür."],
+    ["Posterior teta 'zemin yavaşlaması' ya da 'oksipital yavaş dalga odağı' diye raporlanır: yavaşlamada reaktivite bozuktur ve frekans alfanın tam yarısı değildir.", "Uyuklamadaki ritmik temporal teta (RMTD) orta temporaldir, bu ise oksipitaldir."]);
+  alphaVar("n3", "Hızlı alfa varyantı (harmonik)", "Hızlı alfa varyantı", 2, "sin", 11,
+    ["Posterior, 16–20 Hz, alfanın tam iki katı frekansta ritim; alfayla iç içe ya da dönüşümlü, göz açmayla birlikte baskılanır.", "Normal varyanttır. Beta ile karıştırılır: beta frontosantral ağırlıklıdır ve göz açmayla baskılanmaz."],
+    ["Dağılım oksipital, frekans alfanın iki katı, reaktivite alfa gibi: üçü birlikteyse varyanttır."],
+    ["Posterior hızlı ritim ilaç etkisi ya da 'oksipital hızlı nöbet ritmi' sanılabilir: evrim yoktur ve göz açınca kaybolur."]);
+
+  S({ id: "n4", grp: "nor", ad: "Gençliğin posterior yavaş dalgaları", st: "ec", dur: 34, mont: "lb",
+    build: function (rec, R, rng) {
+      var to = rng.r(24, 26), t = rng.r(1.5, 3), g1 = gain(dir("O1"), 0.5), g2 = gain(dir("O2"), 0.5), a; background(rec, { alpha: rng.r(9.5, 10.6), alphaAmp: 21, eyes: [[to, to + 6]], blinks: [to + 0.15, to + 3] }); note(rec, 0.4, rng.i(11, 17) + " yaş"); note(rec, to, "gözler açıldı"); rec.truth.peaks = [];
+      while (t < to - 1) { a = rng.r(34, 58); var w = knots([[0, 0], [rng.r(0.12, 0.17), -1], [rng.r(0.3, 0.4), 0.1], [0.45, 0]], a); add(rec, g1, w, t, R ? 0.7 : 1); add(rec, g2, w, t, R ? 1 : 0.7); mark(rec, t - 0.05, t + 0.45, "posterior yavaş dalga", "var"); rec.truth.peaks.push(t + 0.15); t += rng.r(1.2, 3.6); }
+      rec.truth.max = mir("O1", R);
+    },
+    oz: ["Oksipital, 2,5–4,5 Hz, tek tek yavaş dalgalar; alfanın altında yer alır ve üzerine binen alfa dalgasıyla kaynaşarak keskin-yavaş dalga izlenimi verir. Genliği alfanın 1,5 katını pek aşmaz.", "8–14 yaşta en sık; 2 yaşın altında ve 21 yaşın üstünde nadirdir. Alfayla aynı reaktiviteyi gösterir: göz açınca kaybolur, uyuklamada alfa ile birlikte silinir.", "Sıklıkla asimetriktir ama taraf sabit değildir."],
+    ipucu: ["Reaktiviteyi kullanın: göz açılınca yavaş dalgalar da alfa da birlikte kayboluyorsa fizyolojiktir.", "Gerçek oksipital diken-dalga alfadan bağımsızdır, göz kapalıyken dizi yapar (fiksasyon-off) ya da uykuda sürer."],
+    tuzak: ["'Oksipital keskin-yavaş dalga' diye raporlanıp çocukta oksipital epilepsi tanısına götürür.", "Genlik alfanın belirgin üstündeyse, süreklilik kazanıyorsa ya da tek tarafta sabitse posterior yavaşlama olarak değerlendirilir."] });
+
+  S({ id: "n5", yan: false, grp: "nor", ad: "İlaç etkisi: yaygın beta", kisa: "İlaç betası", st: "ec", dur: 30, mont: "lb", map: "rms",
+    build: function (rec, R, rng) {
+      background(rec, { alphaAmp: 12 }); var n = rec.n, drv = white(n, rng), f = rng.r(18, 24), sl = pink(n, rng, [1, 0.3, 0, 0]), i, envA = new Float32Array(n); for (i = 0; i < n; i++) envA[i] = Math.max(0.35, Math.min(1.7, 1 + 0.8 * sl[i]));
+      ALLN.forEach(function (nm) { var p = EL[EI[nm]].p; addTo(rec.bg, gain(dir(nm), 0.5), mul(reson(n, rng, f * rng.r(0.97, 1.03), 3, drv, 0.55), envA), 0, (p[1] > -0.2 ? 11 : 5.5) * (0.6 + 0.4 * Math.max(0, p[2]))); });
+      note(rec, 0.4, rng.pick(["klonazepam kullanıyor", "kayıt öncesi diazepam", "fenobarbital kullanıyor"])); mark(rec, 0.5, rec.dur - 0.5, "yaygın, frontosantral baskın beta, iğsi", "var"); rec.truth.peaks = [8];
+    },
+    oz: ["18–25 Hz, frontosantral baskın ama yaygın, genliği iğ biçiminde artıp azalan beta; genlik 25 µV'u aşar. Benzodiazepin ve barbitüratların tipik etkisidir; kloral hidrat ve bazı antidepresanlar da yapar.", "Uyuklama ve hafif uykuda belirginleşir. Alfa çoğu kez yavaşlamış ve düşük genliklidir."],
+    ipucu: ["Betanın bir hemisferde ya da bölgede eksik olması odaklayıcıdır: kortikal hasar ya da subdural koleksiyon o taraftadır. İlaç betası bu yüzden 'aktivasyon' gibi kullanılabilir.", "Kemik defekti üzerinde ise beta daha yüksektir (breach)."],
+    tuzak: ["Ani başlayıp biten, daha yüksek genlikli ve uykuda patlamalar halinde gelen jeneralize hızlı aktivite başka bir şeydir (bkz. jeneralize paroksismal hızlı aktivite).", "Kas artefaktı da hızlıdır ama düzensizdir ve temporal/frontopolar elektrotlarda yoğunlaşır."] });
+
+  S({ id: "n6", yan: false, grp: "nor", ad: "Düşük voltajlı normal EEG", kisa: "Düşük voltajlı EEG (normal varyant)", st: "ec", dur: 30, mont: "lb", map: "rms",
+    build: function (rec, R, rng) { var to = rng.r(14, 17); background(rec, { alphaAmp: 3, level: 0.42, eyes: [[to, to + 6]], blinks: [rng.r(3, 6), to + 0.2, to + 3] }); note(rec, to, "gözler açıldı"); note(rec, to + 6, "gözler kapandı"); mark(rec, 0.5, rec.dur - 0.5, "20 µV altı, alfa seçilmiyor", "var"); rec.truth.peaks = [6]; },
+    oz: ["Uyanıklıkta hiçbir derivasyonda 20 µV'u aşmayan, karışık frekanslı aktivite; belirgin alfa yok. Erişkinlerin yaklaşık onda birinde görülen normal varyanttır, yaşla sıklaşır.", "Hiperventilasyon, göz kapama ya da uyku alfayı ve normal uyku ögelerini ortaya çıkarabilir. Çocukta düşük voltajlı kayıt normal sayılmaz."],
+    ipucu: ["Duyarlılığı 3–5 µV/mm'ye getirin: düşük genlikli ama frekans içeriği normal ve simetrik bir zemin görülmelidir.", "Normal demek için asimetri, yavaşlama ve reaktivite kaybı olmamalı; uyku ögeleri normal olmalıdır."],
+    tuzak: ["Teknik nedenler: kısa elektrot aralığı, yüksek empedans, yanlış duyarlılık, skalp ödemi ya da hematom.", "Koma, hipotermi, ağır sedasyon ve yaygın kortikal hasardaki baskılanma ile klinik bağlam ayırır: orada reaktivite ve uyku ögeleri de yoktur."] });
+
+  var YAS = [["4 aylık", 3.8, 1.5], ["1 yaş", 5.8, 1.3], ["3 yaş", 8, 1.15], ["6 yaş", 8.6, 1], ["9 yaş", 9.2, 0.7], ["15 yaş", 10, 0.35]];
+  S({ id: "n7", yan: false, grp: "nor", ad: "Çocukta yaşa göre posterior baskın ritim", kisa: "Çocuk: yaşa göre posterior ritim", st: "ec", dur: 36, mont: "lb", map: "rms",
+    build: function (rec, R, rng) {
+      var y = rng.pick(YAS), to = rng.r(15, 18), f = y[1] * rng.r(0.96, 1.05); background(rec, { alpha: f, alphaAmp: 30, eyes: [[to, to + 6]], blinks: [to + 0.15, to + 3] }); slowBg(rec, 7 * y[2], POST); slowBg(rec, 3 * y[2]);
+      note(rec, 0.4, y[0]); note(rec, to, y[1] < 5 ? "gözler pasif açıldı" : "gözler açıldı"); note(rec, to + 6, "gözler kapandı"); mark(rec, 1, to, "posterior baskın ritim " + fmt(f, 1) + " Hz", "var"); rec.truth.peaks = [6]; rec.truth.max = "O1"; rec.truth.max2 = "O2";
+    },
+    oz: ["Posterior baskın ritim 3–4 aylıkta 3,5–4,5 Hz olarak belirir; 1 yaşta 5–6 Hz, 3 yaşta 8 Hz, 9 yaşta 9 Hz, 15 yaşta 10 Hz'e ulaşır. Her yeni örnek başka bir yaşı gösterir; yaş trasenin üstünde yazılıdır.", "Çocukta genlik erişkinden yüksektir (50–100 µV olağan), araya posterior teta ve delta karışır; yaş küçüldükçe yavaş bileşen artar.", "Bebekte reaktivite pasif göz kapama ya da açmayla gösterilir."],
+    ipucu: ["Alt sınırlar: 1 yaşta 5 Hz, 3 yaşta 6 Hz, 5 yaşta 7 Hz, 8 yaşta 8 Hz. Bunların altı yaşa göre yavaştır.", "Çocuk EEG'sinde ilk soru yaştır: aynı trase 2 yaşta normal, 10 yaşta belirgin anormaldir."],
+    tuzak: ["Yüksek genlikli posterior yavaş bileşen ve keskin konturlu alfa, çocukta en sık aşırı yorum nedenidir.", "Ağlayan ya da gözleri açık çocukta posterior ritim görülmez; frekansı yalnız sakin, gözler kapalı bölümden ölçün."] });
+
+  S({ id: "n8", grp: "nor", ad: "Yaşlıda aralıklı temporal teta", kisa: "Yaşlıda temporal teta", st: "ec", dur: 36, mont: "lb",
+    build: function (rec, R, rng) { background(rec, { alpha: rng.r(8.6, 9.6) }); note(rec, 0.4, rng.i(66, 84) + " yaş"); var g = mkSrc(rec, mv(dir("T3", "F7", 0.25), R), 0.45, null, "radyal"); bursts(rec, g, { gap: [5, 9], dur: [1.2, 3], mk: burstWave(rng, rng.r(4.5, 6.5), rng.r(24, 34), "sin") }, "temporal teta", "var"); rec.truth.max = mir("T3", R); },
+    oz: ["60 yaş üstünde, uyanıklıkta ve uyuklamada, anterior-orta temporal bölgede kısa 4–7 Hz teta (bazen delta) dizileri; çoğunlukla solda, zemin ve alfa korunmuş.", "Sağlıklı yaşlıların yaklaşık üçte birinde bildirilir. Olağan sayılması için seyrek olmalı (kaydın küçük bir bölümü), düşük-orta genlikli olmalı, alfa ve uyku ögeleri normal kalmalıdır.", "Asemptomatik serebrovasküler hastalıkla ilişkisi tartışmalıdır: 'yaşa göre olağan sınırlarda' diye raporlanır, yapısal lezyon kanıtı sayılmaz."],
+    ipucu: ["Anormal yönde düşündürenler: sürekli ya da uzun diziler, polimorfik delta, aynı tarafta alfa ya da beta baskılanması, keskin dalga eşliği.", "Uyuklamayı dışlayın: yaşlıda temporal teta uyuklamayla belirgin artar."],
+    tuzak: ["Her temporal yavaş dalgayı 'fokal yavaşlama' diye raporlamak yaşlıda gereksiz görüntüleme ve yanlış epilepsi tanısına yol açar.", "Ritmik ve sinüzoidal, 4–20 saniyelik delta dizisi ise TIRDA'dır: epileptojeniteye özgüdür ve yaşa bağlanamaz."] });
+
+  // ----- Artefaktlar
+  var G_ECG = gainOf({ A1: 1, T3: 0.45, T5: 0.4, F7: 0.3, O1: 0.25, C3: 0.12, P3: 0.15, A2: -0.9, T4: -0.4, T6: -0.36, F8: -0.26, O2: -0.22, C4: -0.1, P4: -0.13 });
+  function beats(rec, rr) { var t = rec.rng.r(0.2, 0.8), o = []; while (t < rec.dur - 0.3) { o.push(t); t += rr * rec.rng.r(0.96, 1.04); } return o; }
+  function qrs(rec, t, a) { addTo(rec.ev, G_ECG, knots([[0, 0], [0.02, -0.15], [0.04, 1], [0.06, -0.25], [0.085, 0], [0.26, 0], [0.34, 0.18], [0.42, 0]], a), t); }
+
+  S({ id: "r1", yan: false, grp: "art", ad: "Göz kırpma, göz kapama ve göz kapağı titreşimi", kisa: "Göz kırpma ve kapak titreşimi", st: "eo", dur: 30, mont: "lb",
+    build: function (rec, R, rng) {
+      var tc = rng.r(14, 16), tf = rng.r(20, 23), d = rng.r(1.8, 3); background(rec, { noBlink: true, eyes: [[-5, tc]] }); rec.truth.peaks = [];
+      [rng.r(2, 3), rng.r(5, 6.5), rng.r(8.5, 10.5)].forEach(function (t) { blink(rec, t, rng.r(120, 180)); mark(rec, t - 0.1, t + 0.5, "göz kırpma", "art"); rec.truth.peaks.push(t + 0.1); });
+      note(rec, tc, "gözler kapandı"); addTo(rec.ev, G_BLINK, knots([[0, 0], [0.15, 1], [0.9, 0.6], [2.2, 0]], 190), tc); mark(rec, tc - 0.1, tc + 2, "göz kapama (Bell)", "art");
+      addTo(rec.ev, G_BLINK, rhythm({ dur: d, f: rng.r(5, 8), amp: function (x) { return rng.r(0.8, 1.2) * 38 * ramp(x, 0, 0.3) * (1 - ramp(x, d - 0.3, d)); }, shape: "arch", jit: 0.12, av: 0.35 }, rng), tf); mark(rec, tf, tf + d, "göz kapağı titreşimi", "art"); rec.truth.max = "Fp1"; rec.truth.max2 = "Fp2"; rec.truth.pos = true;
+    },
+    oz: ["Göz bir dipoldür: kornea pozitif, retina negatif. Kırpma ve göz kapamada göz küresi yukarı döner (Bell), Fp1 ve Fp2 pozitifleşir: çift muzda Fp1–F3 ve Fp2–F4'te aşağı sapma, alan F3/F4'ten sonra hızla söner.", "Göz kapağı titreşimi 5–10 Hz ritmik frontopolar aktivite üretir; gözler kapalıyken ve fotik stimülasyonda sık görülür.", "Aşağı bakışta polarite terstir. Tek gözde protez ya da enükleasyon varsa artefakt tek yanlıdır."],
+    ipucu: ["Frontal delta ya da FIRDA'dan ayırmak için alanın düşüşüne bakın: göz artefaktı Fp'den F'ye çok dik düşer, santrale ulaşmaz. Göz altı elektrotu eklenirse göz hareketi orada ters fazlı, beyin kaynaklı aktivite aynı fazlıdır.", "Kırpmayla birlikte alfa baskılanıyor ya da lambda beliriyorsa hasta gözlerini açmıştır."],
+    tuzak: ["Ritmik kapak titreşimi 'frontal diken-dalga' ya da 'frontal nöbet ritmi' sanılır: Fp dışına taşmaz, evrim göstermez.", "Gerçek frontopolar diken de Fp1/Fp2 maksimumdur ama alanı F3/F4 ve F7/F8'e yayılır ve ardıl yavaş dalgası vardır."] });
+
+  S({ id: "r2", yan: false, grp: "art", ad: "Yatay göz hareketleri, lateral rektus dikeni ve nistagmus", kisa: "Yatay göz hareketleri ve nistagmus", st: "eo", dur: 30, mont: "lb",
+    build: function (rec, R, rng) {
+      background(rec, { noBlink: true }); var t = rng.r(2, 3), i, tn = rng.r(18, 21), d = rng.r(4, 6); rec.truth.peaks = []; note(rec, 1.2, "okuyor");
+      while (t < 14) { for (i = 0; i < 4; i++) { eyeLat(rec, t, rng.r(45, 70), false); t += rng.r(0.3, 0.5); } eyeLat(rec, t, rng.r(130, 170), true); mark(rec, t - 1.8, t + 0.9, "satır okuma: sakkadlar ve geri dönüş", "art"); rec.truth.peaks.push(t); t += rng.r(1.6, 2.4); }
+      note(rec, tn - 0.5, "sola bakıyor"); addTo(rec.ev, G_SEM, rhythm({ dur: d, f: rng.r(3, 4.5), amp: function (x) { return 34 * ramp(x, 0, 0.4) * (1 - ramp(x, d - 0.4, d)); }, shape: "saw", jit: 0.06 }, rng), tn); mark(rec, tn, tn + d, "nistagmus: testere dişi, F7/F8 ters fazlı", "art"); rec.truth.max = "F7"; rec.truth.max2 = "F8";
+    },
+    oz: ["Yatay bakışta korneanın yaklaştığı taraf pozitifleşir: sola bakışta F7 pozitif, F8 negatif. İki tarafta ters fazlı, kare biçimli sapmalar; alan F7/F8 ve kulak çevresiyle sınırlıdır.", "Lateral rektus dikeni: sakkadın başında, bakılan taraftaki F7 ya da F8'de tek elektrotlu, çok kısa kas potansiyeli.", "Nistagmus hızlı ve yavaş fazıyla testere dişi biçiminde ritmik aktivite verir; yavaş göz hareketleri (uyuklama) sinüzoidaldir."],
+    ipucu: ["F7 ve F8'i birlikte okuyun: aynı anda ters yönlü sapma göz hareketidir, tek taraflı sapma beyin ya da elektrot kaynaklıdır.", "Okuma, televizyon ve telefon kullanımı sırasında lambda dalgaları da eşlik eder."],
+    tuzak: ["Lateral rektus dikeni ile onu izleyen göz hareketi potansiyeli birlikte 'anterior temporal diken-dalga' gibi görünür.", "Ritmik nistagmus 'temporal teta ritmi' sanılır: iki tarafta ters fazlı olması ve alanın yokluğu ayırır."] });
+
+  S({ id: "r3", grp: "art", ad: "Kas artefaktı: sürekli, çiğneme ve tek motor ünite", kisa: "Kas artefaktı", st: "eo", dur: 34, mont: "lb",
+    build: function (rec, R, rng) {
+      background(rec, {}); var tt = ["T3", "T4", "F7", "F8"], t1 = rng.r(2, 4), t2 = rng.r(12, 14), t3 = rng.r(23, 25), fc = rng.r(1.4, 1.9), e0 = mir(rng.pick(["T4", "F8", "T6"]), R), fm = rng.r(7, 11), t;
+      emg(rec, t1, 6, tt.concat(["Fp1", "Fp2"]), 22); mark(rec, t1, t1 + 6, "sürekli temporalis ve frontalis", "art"); note(rec, t1 + 6.2, "'çeneyi gevşet'");
+      emg(rec, t2, 8, tt.concat(["A1", "A2", "T5", "T6"]), 55, function (x) { return Math.pow(Math.max(0, Math.sin(2 * Math.PI * fc * x)), 3) * ramp(x, 0, 0.5) * (1 - ramp(x, 7.5, 8)); }); mark(rec, t2, t2 + 8, "çiğneme: ritmik kas patlamaları", "art");
+      for (t = t3; t < t3 + 7; t += rng.r(0.93, 1.07) / fm) addTo(rec.ev, oneHot(e0), knots([[0, 0], [0.008, -1], [0.018, 0.5], [0.03, 0]], rng.r(40, 52)), t); mark(rec, t3, t3 + 7, "tek motor ünite: düzenli, tek elektrot", "art"); rec.truth.max = e0; rec.truth.art = true; rec.truth.peaks = [t3 + 2, t2 + 2, t1 + 2];
+    },
+    oz: ["Kas potansiyelleri çok kısa süreli (20 ms altı), yüksek frekanslı ve düzensizdir; en çok temporal (temporalis, masseter) ve frontopolar (frontalis) elektrotlarda. Verteks kas artefaktından en uzak bölgedir.", "Çiğneme ve bruksizm 1–2 Hz ritmik patlamalar verir; her patlama iki yanlı temporaldir, aralarda zemin normaldir.", "Tek motor ünite düzenli aralıklarla ateşleyen, tek elektrotlu, hep aynı biçimli sivri potansiyeller üretir; frekans istemli gevşemeyle değişir."],
+    ipucu: ["Önce nedeni düzeltin (çeneyi gevşetme, ağzı hafif açma); filtreye en son başvurun. HFF'yi 15 Hz'e indirmek kası 'beta' ya da 'diken' gibi gösterir.", "Kas artefaktının altında nöbet ritmi aramak için orta hat kanallarına (Fz–Cz, Cz–Pz) bakın."],
+    tuzak: ["Filtrelenmiş tek motor ünite potansiyelleri periyodik diken ya da PLED sanılır: alan yok, yavaş dalga yok, tek elektrot.", "Tonik nöbetin başlangıcındaki kas aktivitesi de aynı görünür: altında düşük voltajlı hızlı aktivite ve klinik bulgu ayırır."] });
+
+  S({ id: "r4", yan: false, grp: "art", ad: "Glossokinetik artefakt (dil ve yutkunma)", kisa: "Glossokinetik artefakt", st: "eo", dur: 30, mont: "lb", map: "rms",
+    build: function (rec, R, rng) {
+      background(rec, {}); var g = gainOf({ Fp1: 0.7, Fp2: 0.7, F7: 1, F8: 1, T3: 0.85, T4: 0.85, F3: 0.5, F4: 0.5, A1: 0.75, A2: 0.75, C3: 0.2, C4: 0.2, Fz: 0.45, T5: 0.3, T6: 0.3 }), t = rng.r(2, 3.5), d, k = 0, tl = rng.r(20, 22); rec.truth.peaks = [];
+      while (t < 17) { d = rng.r(1, 2.4); var x = pink(Math.round(d * FS), rng, [1, 0.5, 0, 0]); mul(x, hann(x.length)); addTo(rec.ev, g, x, t, rng.r(55, 85)); emg(rec, t, d, ["T3", "T4", "F7", "F8"], 9); if (k === 0) note(rec, t - 0.3, "konuşuyor"); if (k === 2) note(rec, t - 0.3, "yutkundu"); mark(rec, t, t + d, "glossokinetik", "art"); rec.truth.peaks.push(t + d / 2); t += d + rng.r(2, 4); k++; }
+      note(rec, tl, "'la la la' dedirtildi"); d = 5; addTo(rec.ev, g, rhythm({ dur: d, f: rng.r(2.6, 3.4), amp: function (q) { return 60 * ramp(q, 0, 0.4) * (1 - ramp(q, d - 0.4, d)); }, jit: 0.1, av: 0.3 }, rng), tl + 0.3); mark(rec, tl + 0.3, tl + 5.3, "istemli olarak yeniden üretildi", "art");
+    },
+    oz: ["Dilin ucu negatif, kökü pozitif bir dipoldür. Konuşma, yutkunma, emme ve çiğnemede yaygın, frontal ve temporal ağırlıklı delta patlamaları oluşur; çoğu kez kas artefaktı eşlik eder.", "Alan aşağıya doğru artar: alt temporal ve kulak elektrotlarında en yüksektir, verteksde en düşük.", "Hastaya 'la la la' ya da 'ta ta ta' dedirterek yeniden üretilir ve tanı konur; teknisyen notu belirleyicidir."],
+    ipucu: ["Aralıklı frontal delta gördüğünüzde üç şeyi dışlayın: göz hareketi, glossokinetik artefakt, uyuklama.", "Demans ve ağız-yüz diskinezisi olan hastada sürekli glossokinetik artefakt yaygın delta izlenimi verir."],
+    tuzak: ["FIRDA ya da 'frontotemporal yavaşlama' diye raporlanır.", "Yenidoğan ve süt çocuğunda emme artefaktı ritmik olup nöbet sanılabilir."] });
+
+  S({ id: "r5", yan: false, grp: "art", ad: "EKG artefaktı", st: "ec", dur: 30, mont: "ear",
+    build: function (rec, R, rng) { background(rec, { noBlink: true }); var A = rng.r(30, 46), b = beats(rec, rng.r(0.72, 1.02)); b.forEach(function (t, i) { qrs(rec, t, A); if (i > 1 && i < 6) mark(rec, t, t + 0.1, i === 2 ? "QRS" : "", "art"); }); if (rng.u() < 0.6) { var k = rng.i(8, Math.max(9, b.length - 6)); qrs(rec, b[k] + 0.45 * (b[k + 1] - b[k]), A * 1.25); mark(rec, b[k] + 0.45 * (b[k + 1] - b[k]), b[k + 1] + 0.1, "erken vuru: artefakt da erken", "art"); } rec.truth.peaks = [b[3] + 0.04]; rec.truth.max = "A1"; rec.truth.art = true; },
+    oz: ["Düzenli aralıklı (çoğunlukla saniyede bir), hep aynı biçimli sivri potansiyel: QRS. Kalbin elektrik ekseni nedeniyle sol ve sağ tarafta ters polaritelidir, en çok kulak ve alt temporal elektrotlarda görülür.", "Kulak referanslı montajda o tarafın bütün kanallarına bulaşır (sahne bu montajla açılır); çift muzda temporal zincirde hafif kalır. Kısa boyunlu, kilolu hastada ve bebekte belirgindir.", "Aritmide aralıklar düzensizleşir, ventriküler erken vuruda biçim ve genlik değişir: EKG kanalı olmadan tanınması zorlaşır."],
+    ipucu: ["Her kayıtta EKG kanalı bulunmalıdır: şüpheli her periyodik sivri dalga QRS ile hizalanır.", "Başın pozisyonunu değiştirmek ya da bağlantılı kulak referansı kullanmak artefaktı azaltır."],
+    tuzak: ["Sol temporal periyodik keskin dalga ya da PLED sanılır; zemin düşük voltajlıysa (koma, elektroserebral sessizlik) tek görünen aktivite olabilir.", "Kalp pili dikenleri çok kısa ve yüksek genliklidir, EKG'nin hemen önünde gelir."] });
+
+  S({ id: "r6", grp: "art", ad: "Nabız artefaktı", st: "ec", dur: 30, mont: "lb",
+    build: function (rec, R, rng) { background(rec, { noBlink: true }); var e0 = mir(rng.pick(["F7", "T3", "Fp1", "T5", "O1"]), R), A = rng.r(32, 48), b = beats(rec, rng.r(0.75, 1)); b.forEach(function (t, i) { qrs(rec, t, 9); addTo(rec.ev, oneHot(e0), knots([[0, 0], [0.13, 1], [0.34, -0.25], [0.55, 0]], A * rng.r(0.9, 1.1)), t + 0.2); if (i > 1 && i < 6) mark(rec, t + 0.2, t + 0.75, i === 2 ? "nabız dalgası (QRS'ten ~200 ms sonra)" : "", "art"); }); rec.truth.peaks = [b[3] + 0.33]; rec.truth.max = e0; rec.truth.art = true; },
+    oz: ["Skalp arterinin üzerine oturan elektrotta her kalp atımıyla yinelenen yumuşak yavaş dalga; QRS'i 200–300 ms geriden izler. En sık frontal ve temporal elektrotlarda (süperfisiyal temporal arter).", "Tek elektrotludur: o elektrotu paylaşan iki bipolar kanalda ayna görüntüsü verir, komşularda alan yoktur.", "Elektrotu birkaç milimetre kaydırmak artefaktı ortadan kaldırır."],
+    ipucu: ["Periyodik fokal delta gördüğünüzde EKG kanalıyla sabit bir gecikme ilişkisi arayın.", "Balistokardiyografik artefakt bundan farklıdır: her atımla baş ve gövdenin sarsılmasından doğar ve yaygındır."],
+    tuzak: ["'Periyodik fokal yavaş dalga' ya da 'fokal delta' diye raporlanır.", "Taşikardide dalgalar birleşip ritmik delta izlenimi verir."] });
+
+  S({ id: "r7", yan: false, grp: "art", ad: "Ter (elektrodermal) artefaktı", kisa: "Ter artefaktı", st: "ec", dur: 40, page: 20, mont: "lb",
+    build: function (rec, R, rng) { background(rec, {}); var n = rec.n; ["Fp1", "Fp2", "F7", "F8", "F3", "F4", "T3", "T4", "Fz"].forEach(function (nm) { if (rng.u() < 0.8) addTo(rec.ev, oneHot(nm), reson(n, rng, rng.r(0.15, 0.4), 0.25), 0, rng.r(120, 260)); }); note(rec, 0.4, "oda sıcak, hasta terli"); mark(rec, 0.5, rec.dur - 0.5, "0,5 Hz altı, kanaldan kanala bağımsız salınım", "art"); rec.truth.peaks = [10]; },
+    oz: ["Çok yavaş (0,25–0,5 Hz ve altı), yüksek genlikli, uzun süreli taban çizgisi salınımları: ter elektrot-cilt arayüzünün potansiyelini değiştirir. En çok frontal ve temporal elektrotlarda, kanaldan kanala bağımsız.", "Alçak frekans filtresini 1 Hz'e çıkarmak salınımı azaltır ama gerçek deltayı da siler; asıl çözüm odayı serinletmek ve elektrotları yeniden hazırlamaktır.", "Ter iki elektrot arasında tuz köprüsü kurarsa o kanal düzleşir (bkz. tuz köprüsü)."],
+    ipucu: ["Frekansa bakın: serebral delta nadiren 0,5 Hz'in altına iner ve bir alanı vardır; ter salınımı her elektrotta kendi zamanlamasıyla gelir.", "LFF'yi 0,5 ile 1 Hz arasında değiştirip neyin kaybolduğunu izleyin."],
+    tuzak: ["Tek taraflı terleme (sempatik lezyon) tek taraflı 'delta' izlenimi verir.", "Solunumla eşzamanlı çok yavaş salınım başka bir artefakttır: elektrot ya da kablo solunumla hareket ediyordur."] });
+
+  S({ id: "r8", grp: "art", ad: "50 Hz şebeke artefaktı ve yüksek empedans", kisa: "50 Hz artefaktı", st: "ec", dur: 30, mont: "lb",
+    build: function (rec, R, rng) { background(rec, {}); var e0 = mir(rng.pick(["T3", "C3", "F3", "P3", "O1", "F7", "T5"]), R), n = rec.n, w = new Float32Array(n), i, A = rng.r(22, 38), ph = rng.r(0, 6), sl = pink(n, rng, [1, 0, 0, 0]); for (i = 0; i < n; i++) w[i] = A * (1 + 0.25 * sl[i]) * Math.sin(2 * Math.PI * 50.4 * i / FS + ph); addTo(rec.ev, oneHot(e0), w, 0); pop(rec, rng.r(8, 12), e0, -rng.r(90, 140)); pop(rec, rng.r(19, 24), e0, -rng.r(90, 140)); mark(rec, 0.5, rec.dur - 0.5, "50 Hz, tek elektrot; arada elektrot 'pop'", "art"); rec.truth.max = e0; rec.truth.art = true; rec.truth.peaks = [5]; },
+    oz: ["Tek elektrotta sürekli, çok düzenli, kalın bir bant gibi görünen 50 Hz aktivite: o elektrotun empedansı yüksektir ve şebeke gürültüsünü amplifikatörün ortak mod reddi bastıramaz.", "Aynı elektrot çoğu kez 'pop' da üretir: çok dik çıkışlı, üstel dönüşlü, tek elektrotlu potansiyel.", "Bütün kanallarda 50 Hz varsa sorun toprak ya da referans elektrotunda ya da yakındaki bir cihazdadır (yatak, pompa, ısıtıcı)."],
+    ipucu: ["Çentik (notch) filtre görüntüyü düzeltir ama sorunu gizler: önce hangi elektrot olduğunu bulun ve empedansını düzelttirin. Bu simülatörde çentik filtre yoktur; HFF'yi 35 ya da 15 Hz'e indirerek etkisini görebilirsiniz.", "Kabul edilen empedans aralığı 100 Ω ile 5 kΩ (en çok 10 kΩ) arasıdır; elektrotlar arası dengesizlik mutlak değerden daha zararlıdır."],
+    tuzak: ["Zaman tabanı sıkıştırıldığında 50 Hz 'kas artefaktı' ya da 'hızlı ritim' gibi görünür: 5 saniyelik sayfada saniyede 50 düzgün döngü sayılır.", "Yüksek empedanslı elektrot serebral aktiviteyi de düşük genlikli gösterir: yalancı asimetri."] });
+
+  S({ id: "r9", grp: "art", ad: "Ritmik hareket artefaktı: tremor ya da sırta vurma", kisa: "Ritmik hareket artefaktı", st: "ec", dur: 40, page: 20, mont: "lb",
+    build: function (rec, R, rng) {
+      background(rec, {}); var pat = rng.u() < 0.5, t0 = rng.r(8, 11), d = rng.r(14, 20), els = pat ? ["O1", "T5", "P3", "O2"] : ["O1", "O2", "T5", "T6"], f0 = pat ? rng.r(2.2, 2.8) : rng.r(4.3, 5.6);
+      note(rec, t0 - 0.4, pat ? "anne bebeğin sırtına vuruyor" : (R ? "sağ" : "sol") + " elde istirahat tremoru, baş yastıkta"); note(rec, t0 + d + 0.3, pat ? "vurma bitti" : "el tutuldu");
+      els.forEach(function (nm, j) { var w = rhythm({ dur: d, f: pat ? function (x) { return f0 + 1.6 * ramp(x, d * 0.3, d * 0.7) - 1.2 * ramp(x, d * 0.75, d); } : f0, amp: function (x) { return ramp(x, 0, 1) * (1 - ramp(x, d - 0.8, d)) * (pat ? 1 : 0.75 + 0.25 * Math.sin(0.9 * x + j)); }, shape: pat ? "arch" : "sin", shape2: "notch", k: 0.3, jit: pat ? 0.1 : 0.03, av: 0.35 }, rng); addTo(rec.ev, oneHot(mir(nm, R)), w, t0 + (pat ? 0 : 0.004 * j), rng.r(35, 75) * (rng.u() < 0.5 ? 1 : -1)); });
+      mark(rec, t0, t0 + d, pat ? "ritmik, frekansı değişen artefakt: alan yok" : "4–6 Hz monoritmik artefakt: alan yok", "art"); rec.truth.max = mir(els[0], R); rec.truth.art = true; rec.truth.onset = t0; rec.truth.peaks = [t0 + 4];
+    },
+    oz: ["Vücudun ritmik hareketi yastığa değen elektrotları ve kabloları sallar: tremorda 4–6 Hz monoritmik, sırta vurma ya da sallamada 2–4 Hz ve vuran kişinin temposuyla değişen ritmik aktivite. Her yeni örnek ikisinden birini gösterir.", "Kaynağı ele veren: elektrotlar arasında fizyolojik bir alan yok (komşu elektrotlarda polarite ve genlik rastgele), morfoloji çok düzenli ya da mekanik, başlangıç ve bitiş hareketle birebir.", "Sırta vurma artefaktı frekans değiştirdiği için 'evrim' izlenimi verir ve yoğun bakım ile pediatri kayıtlarında en inandırıcı nöbet taklitçisidir."],
+    ipucu: ["Video ve teknisyen notu tanıyı koyar; yoksa ortalama referans haritasına bakın: beyin kaynaklı ritim düzgün gradyanlı bir alan çizer, artefakt yamalı görünür.", "Hareketi durdurun (eli tutun, vurmayı kestirin): ritim anında kesiliyorsa artefakttır."],
+    tuzak: ["Göğüs fizyoterapisi, ventilatör devresindeki su, diyaliz ve infüzyon pompaları, titreme ve hıçkırık benzer ritmik artefaktlar verir.", "Tersine, gerçek nöbetteki klonik hareket de artefakt üretir: artefaktın altında ve öncesinde evrilen serebral ritim arayın."] });
+
+  S({ id: "r10", grp: "art", ad: "Tuz köprüsü (elektrot köprülenmesi)", kisa: "Tuz köprüsü", st: "ec", dur: 30, mont: "lb",
+    build: function (rec, R, rng) {
+      background(rec, {}); var pr = rng.pick([["F3", "C3"], ["C3", "P3"], ["F7", "T3"], ["T3", "T5"], ["P3", "O1"]]).map(function (n) { return mir(n, R); }), a = EI[pr[0]], b = EI[pr[1]], i, m, dr = reson(rec.n, rng, 0.2, 0.25);
+      for (i = 0; i < rec.n; i++) { m = 0.5 * (rec.bg[a][i] + rec.bg[b][i]) + 35 * dr[i]; rec.bg[a][i] = m; rec.bg[b][i] = m; }
+      mark(rec, 0.5, rec.dur - 0.5, lab(pr[0] + "–" + pr[1]) + " düz: iki elektrot kısa devre", "art"); rec.truth.max = pr[0]; rec.truth.max2 = pr[1]; rec.truth.art = true; rec.truth.peaks = [6];
+    },
+    oz: ["İki komşu elektrot arasında jel ya da ter iletken bir köprü kurmuş: ikisi aynı potansiyeli kaydeder, aralarındaki bipolar kanal neredeyse düz çizgidir.", "Referans montajda iki elektrotun trasesi birbirinin kopyasıdır ve çoğu kez ortak, çok yavaş bir salınım taşır.", "Aynı görüntü elektrot kutusunda iki girişin aynı elektrota bağlanmasıyla da oluşur."],
+    ipucu: ["Bipolar montajda tek bir düz kanal gördüğünüzde üç olasılığı ayırın: eşpotansiyel iki elektrot (deşarj sırasında, geçici), tuz köprüsü (sürekli) ve fokal baskılanma (o bölgedeki bütün kanallarda genlik düşük).", "Referans montaja geçin: baskılanmada iki elektrot da düşük genliklidir; köprüde genlik normal ama iki trase aynıdır."],
+    tuzak: ["'Fokal baskılanma' ya da 'elektriksel sessizlik' diye raporlanır.", "Subdural koleksiyon ve skalp ödemi gerçek fokal düşük voltaj yapar: komşu kanallar da etkilenir ve hızlı aktivite seçici olarak azalır."] });
+
+  // ----- K. Jeneralize epileptiform paternler ve nöbetler; L. Yavaşlama, ensefalopati ve koma
+  // Generalized spike-wave run. o: { f (fixed) or f0 -> f1, shape, k, jit, av, edge, wf, R, ips, con }
+  function gsw(rec, t, d, A, o) {
+    o = o || {}; var f0 = o.f0 || 3.7, f1 = o.f1 || 2.6;
+    run(rec, t, d, { f: o.f || (d > 3 ? pw([[0, f0], [1.5, 0.5 * (f0 + f1) + 0.1], [d, f1]]) : 0.5 * (f0 + f1) + 0.2), A: A, wf: o.wf || W_F, shape: o.shape || "psw", shape2: "sw", k: o.k == null ? pw([[0, 0.3], [1.2, 1]]) : o.k, jit: o.jit == null ? 0.025 : o.jit, av: o.av == null ? 0.1 : o.av, edge: o.edge == null ? 0.2 : o.edge, lagf: function (p) { return 0.006 * (0.9 - p[1]); }, R: o.R, ips: o.ips, con: o.con });
+  }
+
+  S({ id: "g1", yan: false, grp: "jen", ad: "3 Hz diken-dalga: interiktal boşalımlar ve tipik absans", kisa: "3 Hz jeneralize diken-dalga (absans)", st: "ec", dur: 50, page: 20, mont: "lb",
+    build: function (rec, R, rng) {
+      background(rec, { alpha: rng.r(9, 10) }); var A = rng.r(110, 140), ts = [rng.r(4, 7), rng.r(13, 16)], ta = rng.r(24, 30), d = rng.r(8, 13); rec.truth.peaks = [ta + 1.5];
+      ts.forEach(function (t) { var q = rng.r(1, 2.4); gsw(rec, t, q, A * 0.9); mark(rec, t, t + q, "kısa boşalım", "ied"); rec.truth.peaks.push(t + 0.5); });
+      gsw(rec, ta, d, A); note(rec, ta + 2.5, "bakıyor, yanıt yok"); note(rec, ta + d + 1, "yanıt verdi, sözcüğü hatırlamıyor"); mark(rec, ta, ta + d, "absans: 3 Hz diken-dalga", "ikt"); rec.truth.onset = ta; rec.truth.end = ta + d;
+    },
+    oz: ["İki yanlı senkron, simetrik, frontosantral maksimum (F3/F4, Fz) diken-dalga; başlangıçta 3,5–4 Hz, sonra 3 Hz, sonda 2,5 Hz. Başlangıç ve bitiş anidir, zemin normaldir, boşalım sonrası yavaşlama yoktur.", "Aynı kayıtta 1–3 saniyelik kısa boşalımlar ve klinik absanslı uzun boşalımlar bulunur. Çocukluk çağı absans epilepsisinde boşalım 4–20 s sürer; juvenil formda frekans biraz daha hızlı, boşalımlar daha uzun ve çoklu diken daha sıktır.", "Uykuda boşalımlar kısalır, düzensizleşir, çoklu diken eklenir; fragmanlar fokal görünebilir."],
+    ipucu: ["Öncü hemisfer boşalımdan boşalıma değişir ve fark milisaniyelerle ölçülür; tutarlı tek taraflı öncülük sekonder bilateral senkroniyi düşündürür.", "Her boşalımda bilinç testi kayda geçmelidir: 3 saniyeyi aşan boşalım çoğunlukla kliniktir."],
+    tuzak: ["Çocukta hipnagojik hipersenkroni ve HV'nin çentikli yavaşlaması aynı frekanstadır: dikenin her komplekste sabit yerde olması ayırır.", "Çift muzda frontopolar kanallardaki diken küçük görünür: alan F3/F4'te maksimumdur ve Fp–F kanalında gradyan düşüktür."] });
+
+  S({ id: "g2", yan: false, grp: "jen", ad: "Jeneralize çoklu diken-dalga (4–6 Hz) ve miyokloni", kisa: "Jeneralize çoklu diken-dalga", st: "ec", dur: 40, mont: "lb",
+    build: function (rec, R, rng) {
+      background(rec, {}); note(rec, 0.4, "sabah, uyku yoksunluklu kayıt"); var t = rng.r(3, 5), k = 0, jm = rng.i(1, 3), A = rng.r(95, 125), d; rec.truth.peaks = [];
+      while (t < rec.dur - 4) { d = rng.r(0.7, 2.4); gsw(rec, t, d, A * rng.r(0.85, 1.1), { f: rng.r(4, 5.6), shape: "psw", k: 0.15, jit: 0.07, av: 0.25, edge: 0.12 }); mark(rec, t, t + d, "çoklu diken-dalga", "ied"); rec.truth.peaks.push(t + 0.3);
+        if (k === jm) { note(rec, t + 0.1, "kollarda sıçrama"); emg(rec, t + 0.05, 0.3, ALLN.concat(["A1", "A2"]), 60); } t += d + rng.r(4, 8); k++; }
+    },
+    oz: ["Kısa (0,5–3 s), düzensiz, 4–6 Hz çoklu diken-dalga ya da diken-dalga boşalımları; iki yanlı, frontosantral maksimum. Her yavaş dalganın önünde iki ya da daha fazla diken vardır.", "Juvenil miyoklonik epilepsinin tipik interiktal ve iktal bulgusudur: miyoklonik sıçrama çoklu dikenle eşzamanlıdır, diken sayısı sıçramanın şiddetiyle artar. Hastaların yaklaşık üçte birinde fotoparoksizmal yanıt vardır.", "Uyanma sonrası dönem, uyku yoksunluğu ve fotik stimülasyon en güçlü aktivatörlerdir."],
+    ipucu: ["Rutin EEG normalse uyku yoksunluklu, uyanmayı da içeren kayıt isteyin: verim uyanmadan sonraki ilk yarım saatte en yüksektir.", "Olguların önemli bir bölümünde fokal görünümlü fragmanlar ve asimetri bulunur; tek başına fokal epilepsi düşündürmez."],
+    tuzak: ["Fokal bulgulara dayanıp karbamazepin ya da okskarbazepin başlanması miyokloni ve absansları kötüleştirir.", "Miyokloninin kas artefaktı çoklu dikenin üzerine biner: dikenin kastan önce başladığını 5 saniyelik sayfada görün."] });
+
+  S({ id: "g3", grp: "jen", ad: "Yavaş diken-dalga (1,5–2,5 Hz)", kisa: "Yavaş diken-dalga", st: "eo", dur: 40, mont: "lb", map: "rms",
+    build: function (rec, R, rng) {
+      background(rec, { alpha: rng.r(6.5, 7.5), alphaAmp: 7, noBlink: true }); slowBg(rec, 11); var t = rng.r(1.5, 3), d, A = rng.r(120, 160), k = 0; rec.truth.peaks = [];
+      while (t < rec.dur - 4) { d = rng.r(4, 10); gsw(rec, t, Math.min(d, rec.dur - 1 - t), A * rng.r(0.85, 1.1), { f: rng.r(1.7, 2.3), shape: "sw", k: 1, jit: 0.1, av: 0.32, edge: 0.6, R: R, ips: k % 2 ? 1.2 : 0.95, con: k % 2 ? 0.85 : 1 }); mark(rec, t, t + d, "yavaş diken-dalga", "ied"); rec.truth.peaks.push(t + 1.5); t += d + rng.r(1.5, 5); k++; }
+    },
+    oz: ["1,5–2,5 Hz, düzensiz, iki yanlı senkron, frontal baskın keskin-yavaş dalga ya da diken-dalga; uzun diziler halinde, başlangıç ve bitişi belirsiz. Genlik ve taraf baskınlığı dizi içinde değişir.", "Zemin yaşa göre yavaş ve düzensizdir. Lennox-Gastaut sendromunun üç EEG ögesinden biridir; diğerleri yavaş zemin ve uykuda jeneralize paroksismal hızlı aktivitedir.", "Dizilerin çoğuna belirgin klinik değişiklik eşlik etmez: uyanıklığın büyük bölümünü kaplayabilir. Uyuklama ve NREM artırır; HV ve fotik stimülasyon pek etkilemez."],
+    ipucu: ["3 Hz diken-dalgadan ayıranlar: frekans, düzensizlik, künt 'diken' (70–200 ms), yavaş zemin ve boşalımların klinikle zayıf ilişkisi.", "Bu hastada elektroklinik status demek için bazale göre belirgin artış ve klinik kötüleşme ya da tedaviyle birlikte EEG ve klinik düzelme gerekir (ACNS 2021)."],
+    tuzak: ["Frontal odaklı sekonder bilateral senkroni de 2–2,5 Hz ve düzensizdir: tutarlı tek taraflı öncülük ve aynı tarafta bağımsız fokal dikenler arayın.", "Trifazik dalgalar da 1,5–2,5 Hz ve frontal baskındır: orada baskın bileşen pozitiftir, ön-arka gecikme vardır ve hasta ensefalopatiktir."] });
+
+  S({ id: "g4", yan: false, grp: "jen", ad: "Atipik absans", st: "eo", dur: 50, page: 20, mont: "lb", map: "rms",
+    build: function (rec, R, rng) {
+      background(rec, { alpha: rng.r(6.8, 7.6), alphaAmp: 8, noBlink: true }); slowBg(rec, 10); var ta = rng.r(14, 18), d = rng.r(12, 20), A = rng.r(115, 150);
+      gsw(rec, ta, d, A, { f: pw([[0, 2.5], [d, 1.9]]), shape: "sw", k: 1, jit: 0.1, av: 0.3, edge: 2.4 }); note(rec, ta + 3.5, "yanıt azaldı, baş öne düşüyor"); note(rec, ta + d - 1, "kademeli düzeliyor");
+      mark(rec, ta, ta + d, "2–2,5 Hz düzensiz diken-dalga, kademeli başlangıç ve bitiş", "ikt"); rec.truth.onset = ta + 1; rec.truth.end = ta + d; rec.truth.peaks = [ta + 4];
+    },
+    oz: ["2,5 Hz'in altında, düzensiz, çoğu kez asimetrik diken-dalga; başlangıç ve bitiş kademelidir, interiktal yavaş diken-dalgadan ancak süre, süreklilik ve klinik eşlikle ayrılır.", "Bilinç bozukluğu kısmidir, tonus değişikliği (baş düşmesi, hafif atoni) ve silik miyokloni sıktır; başlangıç ve bitiş klinikte de fark edilmesi güç biçimde yavaştır.", "Zemin yavaştır. Lennox-Gastaut ve diğer gelişimsel-epileptik ensefalopatilerde görülür."],
+    ipucu: ["Tipik absansla karşılaştırın: orada 3 Hz düzenli kompleksler, ani başlangıç-bitiş, normal zemin ve HV ile kolay tetiklenme vardır.", "Başlangıç anını işaretlemek yerine değişimin tamamlandığı aralığı raporlayın."],
+    tuzak: ["Uzun dizilerde nonkonvülzif status ile sınır belirsizdir: bazal kayıtla karşılaştırma ve klinik değişim belirleyicidir.", "Sedatif ilaç etkisi altındaki uyuklama klinik tabloyu taklit eder."] });
+
+  S({ id: "g5", yan: false, grp: "jen", ad: "Hipsaritmi ve epileptik spazm", kisa: "Hipsaritmi", st: "eo", durum: "süt çocuğu, uyanık", dur: 50, page: 20, mont: "lb", map: "rms", sens: 7,
+    build: function (rec, R, rng) {
+      background(rec, { alphaAmp: 0, noBlink: true }); note(rec, 0.4, rng.i(5, 9) + " aylık"); var t, i, sp = [rng.r(20, 23)]; sp.push(sp[0] + rng.r(8, 11)); sp.push(sp[1] + rng.r(7, 10)); rec.truth.peaks = [];
+      ALLN.forEach(function (nm) { addTo(rec.bg, gain(dir(nm), 0.62), pink(rec.n, rng, [1, 0.55, 0.06, 0]), 0, rng.r(95, 150)); });
+      for (t = rng.r(0.3, 0.8); t < rec.dur - 0.5; t += rng.r(0.25, 0.9)) { var d0 = unit([rng.r(-1, 1), rng.r(-1, 1), rng.r(0.05, 1)]), tp = spikeTpl({ amp: rng.r(110, 230), dur: rng.r(0.05, 0.09), slow: rng.r(0.4, 0.8), slowDur: rng.r(0.25, 0.4) }); addTo(rec.bg, gain(d0, rng.r(0.45, 0.62)), tp.w, t - tp.peak); }
+      sp.forEach(function (ts, j) { var da = rng.r(1.6, 3); addGen(rec, knots([[0, 0], [0.25, -1], [0.6, 0.5], [0.95, 0]], 1), ts - 0.9, wK(W_F, rng.r(230, 300))); attenuate(rec, wAll(0.9), function (x) { return 1 - ramp(x, ts - 0.1, ts + 0.15) * (1 - ramp(x, ts + da, ts + da + 0.8)); });
+        run(rec, ts, da, { f: rng.r(16, 20), A: 9, wf: W_C, jit: 0.06 }); emg(rec, ts - 0.2, 1.3, ALLN, 40, function (x) { return Math.max(0, 1 - Math.abs(x - 0.55) / 0.55); }); note(rec, ts - 0.2, j ? "spazm" : "spazm (fleksör), küme başlıyor"); mark(rec, ts - 0.9, ts + da, "yavaş dalga, ardından elektrodekrement", "ikt"); rec.truth.peaks.push(ts); });
+      mark(rec, 0.5, sp[0] - 1.2, "hipsaritmi: kaotik, yüksek voltajlı, multifokal dikenli", "ied"); rec.truth.onset = sp[0] - 0.9; rec.truth.peaks.push(8);
+    },
+    oz: ["Hipsaritmi: çok yüksek voltajlı (300 µV'un üstü), düzensiz, hemisferler arası ve içi asenkron yavaş dalgalar ve bunlara karışan multifokal dikenler; normal zemin ögeleri ve organizasyon yoktur. NREM'de parçalanır ve patlama-baskılanma benzeri görünebilir; REM'de belirgin azalır.", "Spazmın iktal karşılığı: yüksek genlikli yaygın yavaş dalga (ya da keskin-yavaş dalga) ve ardından 1–5 saniyelik yaygın voltaj düşüşü (elektrodekrement), üzerinde düşük voltajlı hızlı aktivite. Spazmlar küme halinde, 5–30 saniye aralıklarla, çoğu kez uyanma sonrasında gelir.", "Değişkenler: asimetrik ya da tek yanlı hipsaritmi (yapısal lezyon), artmış senkroni, fokal deşarj baskınlığı, burst-supresyon benzeri (modifiye hipsaritmi)."],
+    ipucu: ["Sahne 30 µV/mm duyarlılıkla açılır: standart 7 µV/mm'de kanallar birbirine girer; genliği görmek için bir kez 7'ye inin.", "Tutarlı asimetri, spazm öncesi fokal deşarj ya da spazmların asimetrik olması fokal kortikal lezyonu ve cerrahi seçeneğini gündeme getirir."],
+    tuzak: ["Uyanıklık kaydı görece düzenli olabilir: spazm şüphesinde uyku ve uyanma içeren kayıt şarttır.", "Elektrodekrement sırasında kayıt 'düzeldi' sanılır; teknisyenin her spazmı işaretlemesi gerekir.", "Hipsaritmi olmadan da epileptik spazm olur: tanı için EEG deseni zorunlu değildir."] });
+
+  S({ id: "g6", yan: false, grp: "jen", ad: "Göz kapama duyarlılığı", st: "eo", dur: 44, page: 20, mont: "lb",
+    build: function (rec, R, rng) {
+      var tc = [rng.r(6, 8), rng.r(19, 22), rng.r(33, 35)], A = rng.r(105, 135); background(rec, { eyes: [[-5, tc[0]], [tc[0] + 7, tc[1]], [tc[1] + 7, tc[2]]], blinks: [2.5] }); rec.truth.peaks = [];
+      tc.forEach(function (t, j) { note(rec, t, "gözler kapandı"); if (j < 2) note(rec, t + 7, "gözler açıldı"); addTo(rec.ev, G_BLINK, knots([[0, 0], [0.15, 1], [0.9, 0.6], [2.2, 0]], 170), t); var d = rng.r(1.4, 3); gsw(rec, t + rng.r(0.4, 0.9), d, A * rng.r(0.85, 1.1), { f: rng.r(3.5, 5.5), shape: "psw", k: 0.3, jit: 0.06, av: 0.2, edge: 0.15 }); addTo(rec.ev, G_BLINK, rhythm({ dur: d, f: rng.r(4, 6), amp: 30, shape: "arch", jit: 0.1 }, rng), t + 0.6); mark(rec, t + 0.4, t + 0.9 + d, "göz kapamadan sonra jeneralize boşalım", "ied"); rec.truth.peaks.push(t + 1.1); });
+    },
+    oz: ["Göz kapamayı izleyen 2–4 saniye içinde başlayan, 1–4 saniye süren, 3–6 Hz jeneralize diken-dalga ya da çoklu diken-dalga; gözler kapalı kaldığı sürece devam etmez. Göz kapağı miyoklonisi (hızlı, ritmik kapak sıçramaları ve gözlerin yukarı kayması) eşlik edebilir.", "Göz kapağı miyoklonili epilepsinin (Jeavons) üçlüsü: göz kapağı miyoklonisi, göz kapamayla tetiklenen nöbet ya da EEG boşalımı ve fotosensitivite. Karanlıkta göz kapamayla boşalım olmaz.", "Fiksasyon-off duyarlılığı farklıdır: boşalımlar gözler kapalı ya da fiksasyon engelliyken sürer, fiksasyonla kesilir; daha çok oksipital dikenli epilepsilerde görülür."],
+    ipucu: ["Kayıt sırasında komutla göz açma-kapama en az birkaç kez tekrarlanır; teknisyen her birini işaretler.", "Ayrımı yapmak için aynı manevra karanlıkta ya da Frenzel gözlüğüyle tekrarlanır."],
+    tuzak: ["Kapak titreşimi artefaktı ve Bell fenomeni boşalımın frontal bölümünü örter: santral ve pariyetal kanallarda diken arayın.", "Göz kapama sonrası alfanın ilk saniyedeki yüksek genlikli ve hızlı başlangıcı ('squeak') boşalım sanılmamalıdır."] });
+
+  S({ id: "g7", grp: "jen", ad: "Jeneralize epilepside fokal görünümlü fragmanlar", kisa: "Jeneralize deşarj fragmanları", st: "dr", dur: 40, mont: "lb",
+    build: function (rec, R, rng) {
+      background(rec, {}); var t = rng.r(3, 5), k = 0, A = rng.r(110, 150), d, side, full = rng.i(2, 3); rec.truth.peaks = [];
+      while (t < rec.dur - 3) { if (k === full) { d = rng.r(2, 3.5); gsw(rec, t, d, A * 1.25); mark(rec, t, t + d, "tam jeneralize boşalım", "ied"); } else { d = rng.r(0.35, 1); side = k % 2 === 0 ? R : !R; gsw(rec, t, d, A * rng.r(0.7, 1), { f: rng.r(3, 4.2), k: 1, shape: "sw", R: side, ips: 1.3, con: 0.3, edge: 0.1, wf: k % 3 === 0 ? W_F : W_C }); mark(rec, t, t + d, "fragman: " + (side ? "sağ" : "sol") + " baskın", "ied"); } rec.truth.peaks.push(t + 0.25); t += d + rng.r(3.5, 7); k++; }
+    },
+    oz: ["Jeneralize diken-dalganın kısa, tek tarafta ya da tek bölgede baskın parçaları: bir-iki kompleks, frontal ya da santral, bir sağda bir solda. Aynı kayıtta tam jeneralize boşalımlarla aynı morfolojidedir.", "Genetik jeneralize epilepsilerde olguların önemli bir bölümünde (çalışmalara göre üçte bire kadar) fokal görünümlü deşarj ya da tutarsız asimetri bulunur; uyuklama ve uykuda artar.", "Jeneralize lehine: tarafın kayıt boyunca değişmesi, fragmanın tam boşalımla aynı biçimde olması, zeminin normal ve fokal yavaşlamanın olmaması."],
+    ipucu: ["Karar vermeden önce uyanıklıkta, HV'de ve fotik stimülasyonda tam jeneralize boşalım arayın.", "Fokal epilepsi lehine: hep aynı elektrotta, jeneralize boşalımdan farklı morfolojide deşarj, aynı bölgede yavaşlama, öncü dikenle başlayan sekonder bilateral senkroni."],
+    tuzak: ["Fragmanlar 'bifrontal bağımsız odak' ya da 'multifokal epilepsi' diye raporlanıp ilaç seçimi yanlış yönlendirilir.", "Tersine, frontal lob epilepsisindeki sekonder bilateral senkroni jeneralize epilepsi sanılır: iki yönde de hata yapılır."] });
+
+  S({ id: "g8", yan: false, grp: "jen", ad: "Absans status (nonkonvülzif)", kisa: "Absans status", st: "eo", dur: 70, page: 20, mont: "lb", map: "rms",
+    build: function (rec, R, rng) {
+      background(rec, { alphaAmp: 9, noBlink: true }); var tb = rng.r(40, 44), A = rng.r(95, 125), t = 0.3, d; note(rec, 0.5, "konfüze, yavaş yanıtlıyor, göz kırpıyor"); note(rec, tb, "IV benzodiazepin"); note(rec, tb + 20, "yanıtlar hızlandı");
+      while (t < tb + 12) { var fr = t < tb ? 1 : Math.max(0, 1 - (t - tb) / 12); d = t < tb ? rng.r(5, 11) : rng.r(1, 3); gsw(rec, t, d, A * (0.6 + 0.4 * fr) * rng.r(0.85, 1.1), { f: rng.r(2.5, 3.2), shape: "psw", k: 0.6, jit: 0.07, av: 0.25, edge: 0.4 }); t += d + (t < tb ? rng.r(0.2, 1) : rng.r(1.5, 3.5)); }
+      mark(rec, 0.3, tb, "süreğen 2,5–3 Hz diken-dalga, kısa kesintilerle", "ikt"); mark(rec, tb, tb + 14, "parçalanıyor", "ikt"); mark(rec, tb + 14, rec.dur - 0.3, "zemin geri geliyor, ilaç betası", "ev");
+      ALLN.forEach(function (nm) { var p = EL[EI[nm]].p; if (p[1] > -0.2) addTo(rec.bg, gain(dir(nm), 0.5), gateArr(reson(rec.n, rng, rng.r(19, 23), 3), function (x) { return ramp(x, tb + 8, tb + 20); }), 0, 7); });
+      rec.truth.onset = 0.3; rec.truth.peaks = [10];
+    },
+    oz: ["Dakikalar-saatler süren, sürekli ya da çok kısa kesintili jeneralize 2,5–3,5 Hz diken-dalga ya da çoklu diken-dalga; tipik absanstaki kadar düzenli olmayabilir, genlik ve frekans dalgalanır.", "Klinik tablo değişken konfüzyon, yavaşlama, göz kırpma ve perioral miyoklonidir; hasta yürür, basit komutları yerine getirir. Genetik jeneralize epilepsili hastada ilaç kesilmesi, uygunsuz ilaç (karbamazepin, fenitoin, vigabatrin, tiagabin) ya da uyku yoksunluğuyla; ileri yaşta de novo benzodiazepin yoksunluğuyla görülür.", "IV benzodiazepinle EEG ve klinik birlikte, dakikalar içinde düzelir: tanı ve tedavi aynı adımdır."],
+    ipucu: ["ACNS ölçütleriyle: 2,5 Hz'in üzerinde epileptiform deşarj en az 10 dakika sürüyorsa elektrografik status; klinik bulgu eşlik ediyorsa elektroklinik status.", "Benzodiazepin denemesinde EEG düzelip klinik düzelmiyorsa yanıt 'olası' sayılır (sedasyon klinik değerlendirmeyi bozar)."],
+    tuzak: ["Trifazik dalgalı metabolik ensefalopati benzodiazepinle EEG'de düzelir ama hasta uyanmaz: EEG yanıtı tek başına status kanıtı değildir.", "Psikiyatrik tablo ya da postiktal konfüzyon sanılıp EEG istenmez."] });
+
+  // ----- Yavaşlama, ensefalopati ve koma
+  function irda(id, ad, kisa, wf, st, oz, ipucu, tuzak, child) {
+    S({ id: id, yan: false, grp: "yav", ad: ad, kisa: kisa, st: st, dur: 40, mont: "lb", map: "rms",
+      build: function (rec, R, rng) {
+        var to = child ? rng.r(27, 29) : 999, t = rng.r(3, 5), d; background(rec, child ? { alpha: rng.r(8.8, 9.6), alphaAmp: 24, eyes: [[to, to + 6]], blinks: [to + 0.15] } : { alpha: rng.r(7.8, 8.6), alphaAmp: 13 }); if (child) { note(rec, 0.4, rng.i(6, 10) + " yaş"); note(rec, to, "gözler açıldı"); } else slowBg(rec, 5);
+        rec.truth.peaks = []; while (t < Math.min(rec.dur, to) - 4) { d = rng.r(2, 5); run(rec, t, d, { f: child ? rng.r(2.7, 3.4) : rng.r(2, 2.8), A: child ? rng.r(95, 140) : rng.r(65, 95), wf: wf, jit: 0.04, av: 0.15 }); mark(rec, t, t + d, kisa, "ev"); rec.truth.peaks.push(t + d / 2); t += d + rng.r(4, 8); }
+      }, oz: oz, ipucu: ipucu, tuzak: tuzak });
+  }
+  irda("y1", "FIRDA: frontal aralıklı ritmik delta", "FIRDA", W_F, "ec",
+    ["2–3 Hz, sinüzoidal ya da testere dişi biçimli, iki yanlı senkron, frontal maksimum delta dizileri; 2–6 saniye sürer, aralarda zemin görülür. Uyanıklıkta ve uyuklamada ortaya çıkar, göz açma ve uyaranla baskılanır, uykuda kaybolur.", "Özgül değildir: en sık hafif-orta yaygın ensefalopatide (metabolik, toksik, iskemik), daha seyrek derin orta hat ve arka çukur lezyonlarında, kafa içi basınç artışında. ACNS terminolojisinde karşılığı frontal baskın GRDA'dır.", "Zemin de yavaşsa ensefalopati lehinedir; zemin normalse yapısal neden ya da uyuklama akla gelir."],
+    ["Önce üç taklitçiyi dışlayın: göz hareketi (alan Fp ile sınırlı), glossokinetik artefakt ve HV'nin normal yanıtı (yalnız HV sırasında).", "Tek taraflı baskınlık lezyon tarafını güvenilir biçimde göstermez."],
+    ["Uyuklayan erişkinde tek tük frontal delta dizisi olağan olabilir: hastayı uyandırıp yeniden bakın.", "Frontal diken-dalga dizisiyle karıştırmayın: FIRDA'da diken yoktur ve dalgalar monomorfiktir."]);
+  irda("y2", "OIRDA: oksipital aralıklı ritmik delta", "OIRDA", W_P, "ec",
+    ["Çocukta, 2–4 Hz (çoğu kez 3 Hz), iki yanlı ya da asimetrik oksipital maksimum ritmik delta dizileri; göz açınca baskılanır, göz kapalıyken ve HV ile artar.", "FIRDA'nın çocuktaki karşılığı sayılsa da anlamı farklıdır: çocukluk çağı absans epilepsisi başta olmak üzere jeneralize epilepsilerle güçlü ilişkilidir; ensefalopatide de görülür.", "Dizinin içine küçük dikenler karışabilir ve aynı kayıtta 3 Hz jeneralize diken-dalga bulunabilir."],
+    ["OIRDA görülen çocukta HV'yi iyi eforla tamamlatın ve absans arayın.", "Gençliğin posterior yavaş dalgalarından ayrım: orada dalgalar tek tektir, alfayla kaynaşır ve ritmik dizi yapmaz."],
+    ["HV'nin çocuktaki posterior başlangıçlı normal yanıtı aynı görünür: OIRDA HV dışında da vardır.", "Erişkinde oksipital ritmik delta olağan değildir ve ayrıca değerlendirilir."], true);
+
+  var DERECE = [["hafif", "zemin 7–8 Hz, teta artmış", true], ["orta", "teta-delta baskın, alfa yok", true], ["ağır", "sürekli delta, reaktivite yok", false]];
+  S({ id: "y3", yan: false, grp: "yav", ad: "Yaygın zemin yavaşlaması: hafif, orta, ağır", kisa: "Yaygın zemin yavaşlaması", st: "eo", durum: "ensefalopati", dur: 40, mont: "lb", map: "rms",
+    build: function (rec, R, rng) {
+      var g = rng.i(0, 2), D = DERECE[g], ts = rng.r(18, 22), n = rec.n;
+      background(rec, g === 0 ? { alpha: rng.r(7, 7.8), alphaAmp: 14, noBlink: true } : { alphaAmp: 0, noBlink: true, level: g === 1 ? 0.8 : 0.6 });
+      if (g === 0) { slowBg(rec, 5); ["C3", "C4", "T3", "T4", "Fz"].forEach(function (nm) { addTo(rec.bg, gain(dir(nm), 0.5), reson(n, rng, rng.r(5.5, 6.8), 1.8), 0, 6); }); }
+      if (g === 1) { slowBg(rec, 10); ALLN.forEach(function (nm) { addTo(rec.bg, gain(dir(nm), 0.5), reson(n, rng, rng.r(4.5, 6), 1.8), 0, 5); }); }
+      if (g === 2) { slowBg(rec, 24); ["Fz", "F3", "F4", "Cz", "C3", "C4", "P3", "P4"].forEach(function (nm) { addTo(rec.bg, gain(dir(nm), 0.5), reson(n, rng, rng.r(1, 2), 1.2), 0, 14); }); }
+      note(rec, ts, g === 2 ? "ağrılı uyaran: yanıt yok" : "seslenildi, gözlerini açtı");
+      if (D[2]) { attenuate(rec, wAll(0.5), function (x) { return 1 - ramp(x, ts + 0.3, ts + 1) * (1 - ramp(x, ts + 6, ts + 9)); }); run(rec, ts + 0.6, 6, { f: g ? 7 : 9, A: g ? 9 : 12, wf: W_P, jit: 0.07, av: 0.3 }); blink(rec, ts + 0.8, 120); blink(rec, ts + 3, 110); }
+      mark(rec, 0.5, ts, D[0] + ": " + D[1], "ev"); mark(rec, ts, ts + 8, D[2] ? "reaktif: baskılanma ve hızlanma" : "reaktivite yok", "ev"); rec.truth.peaks = [8];
+    },
+    oz: ["Her yeni örnek üç dereceden birini gösterir. Hafif: posterior baskın ritim 8,5 Hz'in altında, teta artmış, reaktivite ve ön-arka gradyan korunmuş. Orta: teta ve delta baskın, alfa yok, reaktivite azalmış. Ağır: sürekli yüksek genlikli delta ya da baskılanma, reaktivite ve değişkenlik yok.", "Yaygın yavaşlama serebral işlev bozukluğunun derecesini gösterir, nedenini göstermez: metabolik, toksik, hipoksik, enfeksiyöz, dejeneratif ve postiktal durumlar aynı görünür.", "Prognoz açısından dereceden daha değerli üç şey: reaktivite, kendiliğinden değişkenlik (durum döngüsü) ve uyku ögelerinin varlığı."],
+    ipucu: ["Raporda en az dördünü yazın: baskın frekans, süreklilik, reaktivite (hangi uyarana, nasıl), simetri.", "Seri kayıtta frekansın artması ve reaktivitenin geri gelmesi klinik düzelmenin önünden gider."],
+    tuzak: ["Uyuklama ve sedasyon hafif ensefalopatiyle aynı görünür: hastayı uyandırıp en iyi uyanıklık bölümünü değerlendirin.", "Çocukta ve yaşlıda yaşa göre normal sınırlar farklıdır."] });
+
+  S({ id: "y4", grp: "yav", ad: "Bancaud fenomeni: tek yanlı alfa reaktivite kaybı", kisa: "Bancaud fenomeni", st: "ec", dur: 40, mont: "lb", map: "rms",
+    build: function (rec, R, rng) {
+      var to = rng.r(13, 16), tc = to + rng.r(7, 9), hl = ["O1", "P3", "T5"].map(function (n) { return mir(n, !R); }), aff = ["O1", "P3", "T5", "T3"].map(function (n) { return mir(n, R); });
+      background(rec, { blinks: [rng.r(3, 6), to + 0.15, to + rng.r(2.5, 3.5), tc + 0.1] }); note(rec, to, "gözler açıldı"); note(rec, tc, "gözler kapandı");
+      var wv = new Float32Array(NEL), i; for (i = 0; i < NEL; i++) { var sd = sideOf(EL[i].n) * (R ? 1 : -1); wv[i] = sd > 0 ? 0 : sd < 0 ? 0.3 : 0.15; } hl.forEach(function (nm) { wv[EI[nm]] = 0.8; });
+      attenuate(rec, wv, function (x) { return 1 - ramp(x, to, to + 0.4) * (1 - ramp(x, tc, tc + 0.8)); });
+      slowBg(rec, 6, aff.slice(1)); mkSrc(rec, mv(dir("P3", "T5", 0.5), R), 0.55, null, "lezyon"); mark(rec, to, tc, "alfa " + (R ? "sağda" : "solda") + " sürüyor, karşıda baskılandı", "ev"); rec.truth.max = mir("O1", R); rec.truth.peaks = [to + 3];
+    },
+    oz: ["Göz açınca alfa bir tarafta olağan biçimde baskılanır, diğer tarafta sürer. Reaktivitesini yitiren taraf lezyon tarafıdır (pariyetal, temporal ya da oksipital).", "Aynı tarafta alfa genliği normal, hatta daha yüksek olabilir: genlik asimetrisi yanıltır, reaktivite asimetrisi yanıltmaz.", "Mü ritmi ve beta için de benzer tek yanlı reaktivite kaybı tanımlanmıştır."],
+    ipucu: ["Göz açık bölümde iki oksipital bölgeyi karşılaştırmayı alışkanlık edinin; teknisyen göz açma-kapamayı her kayıtta işaretlemelidir.", "Genlik asimetrisi için kural: düşük genlikli taraf anormaldir; kemik defekti ve bu fenomen kuralın iki istisnasıdır."],
+    tuzak: ["Hasta bir gözünü açmadıysa ya da bakış bir yana sapmışsa yalancı asimetri oluşur.", "Uyuklamada alfa iki tarafta eşzamanlı kaybolmayabilir: uyanıklıkta tekrar bakın."] });
+
+  function koma(id, ad, kisa, mk, oz, ipucu, tuzak, st) {
+    S({ id: id, yan: false, grp: "yav", ad: ad, kisa: kisa, st: st || "eo", durum: "koma", dur: 40, mont: "lb", map: "rms",
+      build: function (rec, R, rng) { var t1 = rng.r(12, 15), t2 = rng.r(26, 29); note(rec, t1, "seslenildi"); note(rec, t2, "ağrılı uyaran"); mk(rec, rng, t1, t2); rec.truth.peaks = rec.truth.peaks || [6]; }, oz: oz, ipucu: ipucu, tuzak: tuzak });
+  }
+  koma("y5", "Alfa koma", "Alfa koma", function (rec, rng) {
+    background(rec, { alphaAmp: 0, noBlink: true, level: 0.4 }); var n = rec.n, drv = white(n, rng), f = rng.r(8.5, 11); ALLN.forEach(function (nm) { var p = EL[EI[nm]].p; addTo(rec.bg, gain(dir(nm), 0.5), reson(n, rng, f * rng.r(0.98, 1.02), 1.2, drv, 0.6), 0, 6 + 5 * Math.max(0, p[1] + 0.3)); }); mark(rec, 0.5, rec.dur - 0.5, "yaygın, frontal baskın, monoton alfa: reaktivite yok", "ev"); },
+    ["Komadaki hastada alfa frekansında (8–13 Hz) aktivite. Hipoksik-iskemik tipte yaygın ve frontal baskın, monoton, 10–50 µV; ağrı, ses ve pasif göz açmaya yanıt vermez, kendiliğinden değişkenlik göstermez.", "Pontomezensefalik lezyonda (kilitlenme sendromuna yakın tablo) alfa posterior baskındır ve reaktif olabilir: normal uyanıklık alfasına benzer. İlaç zehirlenmesinde alfa-beta karışımı, frontal baskın ve çoğu kez reaktiftir.", "Teta koma ve alfa-teta koma aynı spektrumun parçasıdır ve aynı hastada birbirine dönüşebilir."],
+    ["Prognozu patern değil neden ve reaktivite belirler: kardiyak arrest sonrası reaktif olmayan alfa koma kötü, ilaç zehirlenmesindeki iyi seyirlidir.", "Arrest sonrası ilk 24 saatte görülen alfa koma geçici bir evre olabilir: sedasyon ve hedefli sıcaklık yönetimi bittikten sonra kaydı tekrarlayın."],
+    ["Uyanık, gözleri kapalı hastanın alfasıyla ya da kilitlenme sendromuyla karıştırmak yıkıcı sonuç doğurur: dağılım, reaktivite ve klinik muayeneyi birlikte değerlendirin.", "Tek başına bu patern beyin ölümü ya da kesin kötü prognoz bildirmez."]);
+  koma("y6", "Beta koma (ilaç zehirlenmesi)", "Beta koma", function (rec, rng, t1, t2) {
+    background(rec, { alphaAmp: 0, noBlink: true, level: 0.6 }); slowBg(rec, 12); var n = rec.n, drv = white(n, rng), f = rng.r(12.5, 16), sl = pink(n, rng, [1, 0.3, 0, 0]), i, e = new Float32Array(n); for (i = 0; i < n; i++) e[i] = Math.max(0.4, Math.min(1.6, 1 + 0.7 * sl[i])); ALLN.forEach(function (nm) { var p = EL[EI[nm]].p; addTo(rec.bg, gain(dir(nm), 0.5), mul(reson(n, rng, f * rng.r(0.97, 1.03), 2.5, drv, 0.55), e), 0, 8 + 6 * Math.max(0, p[1] + 0.3)); });
+    attenuate(rec, wAll(0.4), function (x) { return 1 - ramp(x, t2 + 0.3, t2 + 1) * (1 - ramp(x, t2 + 5, t2 + 8)); }); mark(rec, 0.5, t2, "yaygın 12–16 Hz, altında delta", "ev"); mark(rec, t2, t2 + 7, "ağrıya kısmi reaktivite", "ev"); },
+    ["Yaygın, frontal baskın, yüksek genlikli (30 µV ve üstü) 12–16 Hz aktivite; altında delta ve teta. İğ biçiminde artıp azalabilir.", "Benzodiazepin ve barbitürat başta olmak üzere sedatif-hipnotik zehirlenmesinin tipik bulgusudur; doz arttıkça beta yavaşlar ve genliği düşer, ardından patlama-baskılanma ve baskılanma gelir.", "Neden ilaçsa geri dönüşlüdür ve prognoz iyidir; reaktivite çoğu kez korunmuştur."],
+    ["Nedeni bilinmeyen komada belirgin beta, toksikoloji taramasını öne aldırır.", "Sedasyon altındaki yoğun bakım hastasında aynı görüntü beklenen ilaç etkisidir: raporda ilaçları ve dozları belirtin."],
+    ["Beyin sapı lezyonunda da beta-alfa koma görülebilir: yapısal nedeni dışlamadan 'ilaç' demeyin.", "Kas artefaktıyla karıştırmayın: nöromüsküler bloker altında sürüyorsa serebraldir."]);
+  koma("y7", "İğcik koma", "İğcik koma", function (rec, rng, t1, t2) {
+    background(rec, { spindles: false, vertex: false }); var t = rng.r(1, 2.5), d; rec.truth.peaks = []; while (t < rec.dur - 2) { d = rng.r(0.9, 2); spindle(rec, t, d, 1.1, rng.r(11.5, 13.5)); mark(rec, t, t + d, "iğcik", "var"); rec.truth.peaks.push(t + d / 2); t += d + rng.r(1.5, 4); }
+    kOnly(rec, t2 + 0.35, 170); mark(rec, t2 + 0.3, t2 + 1.4, "uyarana K kompleksi; uyanma yok", "ev"); },
+    ["Komadaki hastada N2 uykusuna benzeyen trase: 11–14 Hz iğcikler, verteks dalgaları ve K kompleksleri, altında teta-delta. Ayırt ettiren, güçlü uyaranla hastanın uyandırılamamasıdır.", "Çıkan retiküler aktive edici sistemin pontomezensefalik düzeyde etkilendiğini, talamokortikal devrelerin sağlam kaldığını gösterir: kafa travması, beyin sapı lezyonu, ensefalit, hipoksi, ilaç.", "Uyarana K kompleksi ya da geçici değişiklikle yanıt (reaktivite) iyi prognoz işaretidir; travma sonrası iğcik koma görece iyi seyirlidir."],
+    ["Fizyolojik uykudan ayrım EEG'yle değil muayeneyle yapılır: kayda uyaranı ve yanıtı yazdırın.", "İğciklerin tek tarafta kaybı o hemisferde ek yapısal hasarı düşündürür."],
+    ["Sedasyon altındaki hastada iğcik benzeri aktivite ilaç etkisidir.", "Uyku ögelerinin varlığı tek başına prognoz bildirmez: neden belirleyicidir."], "n2");
+  koma("y8", "Koma: reaktivite testi", "Koma: reaktivite testi", function (rec, rng, t1, t2) {
+    background(rec, { alphaAmp: 0, noBlink: true, level: 0.6 }); slowBg(rec, 17); var re = rng.u() < 0.55, typ = rng.u() < 0.5;
+    if (re && typ) { attenuate(rec, wAll(0.6), function (x) { return 1 - ramp(x, t2 + 0.4, t2 + 1.2) * (1 - ramp(x, t2 + 6, t2 + 9)); }); run(rec, t2 + 0.8, 6, { f: 6.5, A: 9, wf: W_C, jit: 0.08, av: 0.3 }); emg(rec, t2 + 0.5, 2.5, ["T3", "T4", "F7", "F8"], 10); }
+    if (re && !typ) run(rec, t2 + 0.8, rng.r(7, 10), { f: rng.r(1.5, 2), A: rng.r(75, 105), wf: W_F, jit: 0.05, av: 0.2, edge: 1.2 });
+    mark(rec, t1, t1 + 5, "sese yanıt yok", "ev"); mark(rec, t2, t2 + 9, re ? (typ ? "reaktif: baskılanma, hızlanma" : "reaktif: uyaranla ritmik delta (SI-GRDA)") : "reaktivite yok", "ev"); rec.truth.peaks = [t2 + 3]; },
+    ["Reaktivite: uyarandan sonra zeminde yinelenebilir frekans ya da genlik değişikliği (baskılanma ya da artış). Yalnız kas ya da göz kırpma artefaktı reaktivite sayılmaz. Her yeni örnek üç sonuçtan birini gösterir: yok, baskılanma ve hızlanma, uyaranla ortaya çıkan ritmik delta.", "ACNS 2021'e göre raporlanır: reaktif, reaktif değil, belirsiz ya da yalnız SIRPIDs. Uyaranın türü ve şiddeti yazılır; standart sıralama ses, hafif dokunma, ağrı (tırnak yatağı, trapez, supraorbital), aspirasyon.", "Kardiyak arrest sonrası komada reaktivite yokluğu kötü prognoz göstergelerinden biridir, ancak tek başına karar verdirmez: sedasyon, hipotermi ve uyaranın yetersizliği yanlış negatif verir."],
+    ["Testi uyaran öncesi en az 10–20 saniyelik sakin zeminle yapın ve en az iki kez tekrarlayın.", "Uyaranla ortaya çıkan ritmik, periyodik ya da iktal görünümlü boşalımlar (SIRPIDs) reaktivitenin bir biçimidir; tedavi kararını ayrıca etkilemez."],
+    ["Uyaran sırasındaki hareket artefaktını 'zemin değişti' diye okumayın.", "Nöromüsküler bloker reaktiviteyi ortadan kaldırmaz, yalnız kas yanıtını siler; derin sedasyon ise reaktiviteyi gerçekten baskılar."]);
+  S({ id: "y9", yan: false, grp: "yav", ad: "Elektroserebral inaktivite", st: "eo", durum: "koma", dur: 40, mont: "ear", sens: 0,
+    build: function (rec, R, rng) { background(rec, { alphaAmp: 0, noBlink: true, level: 0.03 }); var b = beats(rec, rng.r(0.6, 0.85)), A = rng.r(5, 9), t1 = rng.r(12, 15), t2 = rng.r(25, 28); b.forEach(function (t) { qrs(rec, t, A); }); ["T3", "O1", "P4"].forEach(function (nm) { addTo(rec.ev, oneHot(nm), reson(rec.n, rng, 0.27, 0.05), 0, rng.r(1.5, 3)); }); note(rec, 0.4, "duyarlılık 2 µV/mm"); note(rec, t1, "yüksek sesle seslenildi"); note(rec, t2, "ağrılı uyaran"); emg(rec, t2 + 0.1, 0.5, ["Fp1", "F7"], 2.5); mark(rec, 0.5, rec.dur - 0.5, "2 µV üstü serebral aktivite yok; görülen EKG ve ventilatör artefaktı", "ev"); rec.truth.peaks = [6]; },
+    oz: ["2 µV'un üzerinde serebral kaynaklı aktivite yok. Kayıtta kalan her şey artefakttır: EKG, nabız, ventilatör ve solunumla eşzamanlı salınım, elektrot ve çevre gürültüsü. Sahne 2 µV/mm duyarlılık ve kulak referansıyla açılır.", "ACNS teknik koşulları: en az 8 skalp elektrotu, empedans 100 Ω – 10 kΩ, elektrotlar arası uzaklık en az 10 cm (çift aralıklı montaj), duyarlılık en az 2 µV/mm, LFF 1 Hz'in altında ve HFF 30 Hz'in üstünde, en az 30 dakika kayıt, ses, ağrı ve ışık uyaranlarına yanıtsızlığın belgelenmesi, sistemin bütünlüğünün her elektrota dokunarak sınanması.", "EEG beyin ölümü tanısında destekleyici testtir: tanı kliniktir. Sedatif ilaçlar, hipotermi (32 °C altı), ağır metabolik bozukluk ve şok dışlanmadan yorumlanmaz."],
+    ipucu: ["EKG ve gerekirse solunum kanalı olmadan bu kayıt yorumlanamaz: her düzenli potansiyeli onlarla hizalayın.", "Kas artefaktı şüphesinde kısa etkili nöromüsküler blokerle tekrarlanır."],
+    tuzak: ["Standart 7 µV/mm duyarlılıkta ağır baskılanmış ama var olan aktivite de düz çizgi gibi görünür.", "Barbitürat koması, ağır hipotermi ve yenidoğan dönemi geri dönüşlü elektroserebral sessizliğin bilinen nedenleridir."] });
+
   // ---------- viewer state and drawing
   function el(id) { return document.getElementById(id); }
   function fmt(x, d) { return x.toFixed(d == null ? 0 : d).replace(".", ","); }
-  var SENS = [2, 3, 5, 7, 10, 15, 20, 30, 50, 70, 100], PAGES = [5, 10, 20], GRP = [["lok", "Lokalizasyon dersleri", "Lokalizasyon"], ["ied", "Fokal epileptiform deşarjlar", "Epileptiform"], ["var", "Varyantlar ve taklitçiler", "Varyant"], ["ikt", "İktal EEG", "İktal"], ["per", "Periyodik paternler", "Periyodik"], ["acn", "Yoğun bakım EEG'si (ACNS 2021)", "ACNS"]];
+  var SENS = [2, 3, 5, 7, 10, 15, 20, 30, 50, 70, 100], PAGES = [5, 10, 20], GRP = [["lok", "Lokalizasyon dersleri", "Lokalizasyon"], ["nor", "Normal uyanıklık ve yaşa göre bulgular", "Normal"], ["uyk", "Uyku EEG'si", "Uyku"], ["akt", "Aktivasyon: hiperventilasyon ve fotik", "Aktivasyon"], ["var", "Benign varyantlar ve taklitçiler", "Varyant"], ["art", "Artefaktlar", "Artefakt"], ["ied", "Fokal epileptiform deşarjlar", "Fokal deşarj"], ["jen", "Jeneralize epileptiform paternler ve nöbetler", "Jeneralize"], ["ikt", "Fokal iktal EEG", "İktal"], ["yav", "Yavaşlama, ensefalopati ve koma", "Yavaşlama"], ["per", "Periyodik paternler", "Periyodik"], ["acn", "Yoğun bakım EEG'si (ACNS 2021)", "ACNS"]];
   var st = { mode: "atlas", rec: null, scene: null, R: false, seed: 1, mont: "lb", sens: 3, page: 10, lff: 0.5, hff: 70, t0: 0, cur: null, marks: true, srcOn: true, modern: false, mapMode: "inst", play: false,
     hideMap: false, band: null, userMark: null, pick: null, good: null, grp: "lok", chans: [], der: [], onTrace: null, onEl: null, lok: { lvl: 0 }, quiz: { pool: "mix" }, store: { lok: [0, 0], sinav: {} } };
   try { var sv = JSON.parse(localStorage.getItem("eeg-sim-v1") || "null"); if (sv && sv.lok) st.store = sv; if (sv && sv.modern) st.modern = true; } catch (e) {}
@@ -1497,8 +2353,8 @@ button.wide { align-self: stretch; text-align: left; }
     rec.truth.max = ord[0]; rec.truth.max2 = v[ord[1]] <= 0.8 * v[ord[0]] ? ord[1] : null;
   }
   function build(sc, R, seed, mix) {
-    var rec = Rec(sc.dur, seed, sc.st), rng = rec.rng; rec.truth = {}; rec.jit = sc.grp === "ied" || sc.grp === "ikt" ? 0.12 : 0;
-    sc.build(rec, R, rng); if (sc.grp === "ied") autoFocus(rec);
+    var rec = Rec(sc.dur, seed, sc.st), rng = rec.rng; rec.truth = {}; rec.jit = sc.jit != null ? sc.jit : sc.grp === "ied" || sc.grp === "ikt" ? 0.12 : 0;
+    sc.build(rec, R, rng); if (sc.grp === "ied" || sc.grp === "lok") autoFocus(rec);
     if (mix && mix.length) {
       var keep = rec.truth, nsrc = rec.src.length, nm0 = rec.marks.length; rec.extra = [];
       mix.forEach(function (d) { rec.truth = {}; d.build(rec, rng.u() < 0.5, rng); rec.extra.push(d.kisa || d.ad); });
@@ -1521,6 +2377,7 @@ button.wide { align-self: stretch; text-align: left; }
     cx.setTransform(dpr, 0, 0, dpr, 0, 0);
     cx.clearRect(0, 0, W, H);
     if (!r) return;
+    if (r.stim.length) B = 38;
     var rows = 0; st.chans.forEach(function (ch) { rows += ch ? 1 : 0.5; });
     var rowH = (H - T - B) / rows, pw = W - L - Rm, uv = rowH / (SENS[st.sens] * 8), t0 = st.t0, t1 = t0 + st.page;
     function X(t) { return L + (t - t0) / st.page * pw; }
@@ -1555,6 +2412,21 @@ button.wide { align-self: stretch; text-align: left; }
     // labels
     y = T; cx.font = "500 " + (rowH < 19 ? 10 : 11) + "px 'IBM Plex Mono', monospace"; cx.textAlign = "right"; cx.textBaseline = "middle";
     st.chans.forEach(function (ch) { if (!ch) { y += rowH * 0.5; return; } cx.fillStyle = isF(ch) ? colF : (dk ? "#b9bab6" : "#3a3a38"); cx.fillText(lab(ch.label), L - 6, y + rowH * 0.5); y += rowH; });
+    // technologist's notes (always visible) and the photic stimulator channel
+    var ink2 = dk ? "#ececea" : "#161616", paper = dk ? "rgba(18,19,20,.86)" : "rgba(248,248,246,.9)";
+    var noteEnd = [-99, -99];
+    r.notes.forEach(function (nt) {
+      if (nt.t < t0 || nt.t > t1) return; var xx = Math.round(X(nt.t)) + 0.5; cx.setLineDash([2, 3]); cx.strokeStyle = dk ? "rgba(236,236,234,.6)" : "rgba(0,0,0,.5)"; cx.lineWidth = 1; cx.beginPath(); cx.moveTo(xx, T + 15); cx.lineTo(xx, H - B); cx.stroke(); cx.setLineDash([]);
+      cx.font = "italic 11.5px 'Helvetica Neue', Helvetica, Arial, sans-serif"; var tw = cx.measureText(nt.label).width, lx = Math.max(L + 2, Math.min(xx + 4, W - Rm - tw - 4)), row = lx > noteEnd[0] ? 0 : lx > noteEnd[1] ? 1 : 0, ny = T + 15 + 16 * row; noteEnd[row] = lx + tw + 8;
+      cx.fillStyle = paper; cx.fillRect(lx - 3, ny, tw + 6, 15); cx.fillStyle = ink2; cx.textAlign = "left"; cx.textBaseline = "top"; cx.fillText(nt.label, lx, ny + 2);
+    });
+    if (r.stim.length) {
+      var sy = H - B + 5, sh = 11; cx.fillStyle = dk ? "#b9bab6" : "#3a3a38"; cx.font = "500 10px 'IBM Plex Mono', monospace"; cx.textAlign = "right"; cx.textBaseline = "middle"; cx.fillText("FOTİK", L - 6, sy + sh / 2);
+      cx.strokeStyle = ink2; cx.lineWidth = 1; cx.beginPath();
+      r.stim.forEach(function (sm) { if (sm.t1 < t0 || sm.t0 > t1) return; sm.fl.forEach(function (tf) { if (tf < t0 || tf > t1) return; var xx = Math.round(X(tf)) + 0.5; cx.moveTo(xx, sy); cx.lineTo(xx, sy + sh); }); });
+      cx.stroke(); cx.font = "600 11px 'IBM Plex Mono', monospace"; cx.textAlign = "left"; cx.textBaseline = "bottom";
+      r.stim.forEach(function (sm) { if (sm.t1 < t0 || sm.t0 > t1) return; var tx = sm.f + " Hz", xa = Math.max(L + 2, X(sm.t0) + 2), tw = cx.measureText(tx).width; cx.fillStyle = paper; cx.fillRect(xa - 2, sy - 15, tw + 4, 14); cx.fillStyle = ink2; cx.fillText(tx, xa, sy - 2); });
+    }
     // time axis
     cx.fillStyle = dk ? "#9a9b98" : "#777774"; cx.font = "11px 'IBM Plex Mono', monospace"; cx.textAlign = "center"; cx.textBaseline = "alphabetic";
     for (s = Math.ceil(t0); s <= t1; s += st.page > 10 ? 2 : 1) { cx.textAlign = s >= t1 ? "right" : s <= t0 ? "left" : "center"; cx.fillText(s + " s", X(s), H - 6); }
@@ -1629,12 +2501,12 @@ button.wide { align-self: stretch; text-align: left; }
     });
     el("map-info").textContent = info;
   }
-  var ST_AD = { ec: "uyanık, gözler kapalı", eo: "uyanık, gözler açık", dr: "uyuklama", n2: "N2 uykusu" };
+  var ST_AD = { ec: "uyanık, gözler kapalı", eo: "uyanık, gözler açık", dr: "uyuklama", n2: "N2 uykusu", n3: "N3 uykusu", rem: "REM uykusu" };
   function headline() {
     var r = st.rec, a = "", b = "";
-    if (st.mode === "atlas" && st.scene) { a = st.scene.ad.replace(/^\d+ /, ""); b = GRP.filter(function (g) { return g[0] === st.scene.grp; })[0][1] + " · " + ST_AD[r.state] + " · " + (st.R ? "sağ" : "sol") + " taraf örneği" + (st.cur != null ? " · t = " + fmt(st.cur, 2) + " s" : ""); }
+    if (st.mode === "atlas" && st.scene) { a = st.scene.ad.replace(/^\d+ /, ""); b = GRP.filter(function (g) { return g[0] === st.scene.grp; })[0][1] + " · " + (st.scene.durum || ST_AD[r.state]) + (st.scene.yan === false ? "" : " · " + (st.R ? "sağ" : "sol") + " taraf örneği") + (st.marks && r.truth.max && (st.scene.grp === "lok" || st.scene.grp === "ied") ? " · " + (r.truth.art ? "artefakt " : r.truth.pos ? "pozitif maksimum " : "negatif maksimum ") + nm(r.truth.max) + (r.truth.max2 ? " ve " + nm(r.truth.max2) : "") : "") + (st.cur != null ? " · t = " + fmt(st.cur, 2) + " s" : ""); }
     else if (st.mode === "lok") { a = "Negatif maksimumu ve alan tipini bulun"; b = "Lokalizasyon atölyesi · " + LOK_LV[st.lok.lvl].toLowerCase() + " · " + (r ? ST_AD[r.state] : ""); }
-    else if (st.mode === "sinav") { var q = st.quiz.q; a = q && q.pool === "ad" ? (q.step === 2 ? acnsName(q.o) : "Paterni ACNS terimleriyle adlandırın") : q && q.step === 2 ? (q.sc.kisa || q.sc.ad) : "Bu kayıtta ne var?"; b = "Beni sına" + (r ? " · " + ST_AD[r.state] : "") + (st.cur != null ? " · t = " + fmt(st.cur, 2) + " s" : ""); }
+    else if (st.mode === "sinav") { var q = st.quiz.q; a = q && q.pool === "ad" ? (q.step === 2 ? acnsName(q.o) : "Paterni ACNS terimleriyle adlandırın") : q && q.step === 2 ? (q.sc.kisa || q.sc.ad) : "Bu kayıtta ne var?"; b = "Beni sına" + (r && q && (q.step === 2 || ["nua", "jya"].indexOf(q.pool) < 0) ? " · " + (st.scene && st.scene.durum || ST_AD[r.state]) : "") + (st.cur != null ? " · t = " + fmt(st.cur, 2) + " s" : ""); }
     el("hl").textContent = a; el("hl-sub").textContent = b;
   }
   var rafQ = false;
@@ -1733,20 +2605,33 @@ button.wide { align-self: stretch; text-align: left; }
 
   function renderPanel() { if (st.mode === "atlas") renderAtlas(); else if (st.mode === "lok") renderLok(); else if (st.mode === "sinav") renderQuiz(); }
 
+  var ANAHTAR = { l: "lokalizasyon ders", n: "normal uyanıklık", u: "uyku", h: "hiperventilasyon hv aktivasyon", f: "fotik ifs ışık stimülasyon aktivasyon", v: "varyant benign", r: "artefakt", e: "fokal deşarj epileptiform", g: "jeneralize epilepsi", i: "iktal nöbet", y: "yavaşlama koma ensefalopati", p: "periyodik", a: "acns yoğun bakım ybü", b: "acns zemin yoğun bakım ybü" };
+  function sceneSens(sc) { if (sc.sens != null) { if (st.sens0 == null) st.sens0 = st.sens; st.sens = sc.sens; } else if (st.sens0 != null) { st.sens = st.sens0; st.sens0 = null; } }
   // ----- atlas
   function openScene(sc, keepSide) {
     st.band = null; st.hideMap = false; st.onTrace = null; st.onEl = null; st.marks = true; st.srcOn = true;
     if (!keepSide) st.seed = 1 + Math.floor(Math.random() * 1e6);
-    st.mont = sc.mont || "lb"; st.mapMode = sc.map || "inst"; st.page = 10;
+    st.mont = sc.mont || "lb"; st.mapMode = sc.map || "inst"; st.page = sc.page || 10;
+    sceneSens(sc);
     setRec(build(sc, st.R, st.seed), sc); renderAtlas();
   }
   function renderAtlas() {
     var p = el("panel"), sc = st.scene; p.innerHTML = "";
-    var seg = h("div", "seg tight"); GRP.forEach(function (g) { var b = btn(g[2], function () { st.grp = g[0]; openScene(SC.filter(function (s) { return s.grp === g[0]; })[0]); }); b.setAttribute("aria-pressed", st.grp === g[0] ? "true" : "false"); seg.appendChild(b); }); p.appendChild(seg);
-    var list = h("div", "pats"); SC.filter(function (s) { return s.grp === st.grp; }).forEach(function (s) { var b = btn(s.ad, function () { openScene(s); }); b.setAttribute("aria-pressed", sc && sc.id === s.id ? "true" : "false"); list.appendChild(b); }); p.appendChild(list);
+    var lib = h("div", "lib"), sel = h("select", ""), q = h("input", ""), list = h("div", "pats");
+    sel.id = "grp-sel"; sel.setAttribute("aria-label", "Kütüphane bölümü"); GRP.forEach(function (g) { var n = SC.filter(function (s) { return s.grp === g[0]; }).length; if (!n) return; var o = document.createElement("option"); o.value = g[0]; o.textContent = g[1] + " (" + n + ")"; sel.appendChild(o); }); sel.value = st.grp;
+    sel.addEventListener("change", function () { st.grp = sel.value; st.q = ""; openScene(SC.filter(function (s) { return s.grp === sel.value; })[0]); });
+    q.type = "search"; q.id = "lib-q"; q.placeholder = "Ara: " + SC.length + " patern"; q.setAttribute("aria-label", "Kütüphanede ara"); q.value = st.q || "";
+    function fill() {
+      list.innerHTML = ""; var k = (st.q || "").toLocaleLowerCase("tr").trim(), items = k ? SC.filter(function (s) { return (s.ad + " " + (s.kisa || "") + " " + (ANAHTAR[s.id.charAt(0)] || "")).toLocaleLowerCase("tr").indexOf(k) >= 0; }) : SC.filter(function (s) { return s.grp === st.grp; });
+      items.forEach(function (s) { var b = btn(s.ad, function () { openScene(s); }); if (k) { var tg = h("span", "tag", GRP.filter(function (g) { return g[0] === s.grp; })[0][2]); b.appendChild(tg); } b.setAttribute("aria-pressed", sc && sc.id === s.id ? "true" : "false"); list.appendChild(b); });
+      if (!items.length) list.appendChild(h("p", "note", "Eşleşen patern yok."));
+    }
+    q.addEventListener("input", function () { st.q = q.value; fill(); }); fill();
+    lib.appendChild(sel); lib.appendChild(q); p.appendChild(lib); p.appendChild(list);
     if (!sc) return;
     var row = h("div", "row"), sd = h("div", "seg"); [["Sol", false], ["Sağ", true]].forEach(function (o) { var b = btn(o[0], function () { st.R = o[1]; openScene(sc, true); }); b.setAttribute("aria-pressed", st.R === o[1] ? "true" : "false"); sd.appendChild(b); });
-    row.appendChild(h("span", "label", "Taraf")); row.appendChild(sd); row.appendChild(btn("Yeni örnek üret", function () { openScene(sc); })); p.appendChild(row);
+    if (sc.yan !== false) { row.appendChild(h("span", "label", "Taraf")); row.appendChild(sd); } row.appendChild(btn("Yeni örnek üret", function () { st.R = Math.random() < 0.5; openScene(sc); })); p.appendChild(row);
+    p.appendChild(h("p", "note", sc.yan === false ? "Her yeni örnek baştan üretilir: zamanlama, frekans ve genlik değişir." : "Her yeni örnekte taraf rastgele seçilir ve odak, paternin tanımının izin verdiği sınırlar içinde başka bir yere düşer. Sol / Sağ aynı örneği karşı tarafa çevirir."));
     var tx = h("div", "read");
     tx.appendChild(h("h3", "", "Ne görülür")); tx.appendChild(h("div", "", ul(sc.oz)));
     tx.appendChild(h("h3", "", "Okuma ipucu")); tx.appendChild(h("div", "", ul(sc.ipucu)));
@@ -1763,7 +2648,7 @@ button.wide { align-self: stretch; text-align: left; }
 
   // ----- localisation workshop
   var LOK_LV = ["Kolay", "Orta", "Zor"], FTYPE = [["rad", "Radyal (tek kutup)"], ["tan", "Tanjansiyel ya da oblik (iki kutup)"], ["art", "Alan yok (artefakt)"]];
-  function lokNew() {
+  function lokNew() { sceneSens({});
     var L = st.lok, lvl = L.lvl, seed = 1 + Math.floor(Math.random() * 1e9), rec = Rec(20, seed, lvl === 2 ? "dr" : "ec"), rng = rec.rng, R = rng.u() < 0.5, type = "rad", g, amp, d;
     rec.truth = {}; background(rec, lvl === 0 ? { noBlink: true } : {});
     if (lvl === 0) { g = mkSrc(rec, mv(dir(rng.pick(["F7", "T3", "T5", "F3", "C3", "P3"])), R), 0.42, null, "radyal"); amp = [100, 130]; }
@@ -1826,24 +2711,27 @@ button.wide { align-self: stretch; text-align: left; }
   }
 
   // ----- quiz
-  var POOLS = { mix: "Karışık", trans: "Deşarj ve varyant", ikt: "İktal", per: "Periyodik ve YBÜ", ad: "ACNS adlandırma" }, SIDES = [["L", "Sol"], ["R", "Sağ"], ["B", "İki yanlı / orta hat"]];
+  var POOLS = { mix: "Karışık", trans: "Deşarj ve varyant", ikt: "İktal", nua: "Normal, uyku, aktivasyon", jya: "Jeneralize, yavaşlama, artefakt", per: "Periyodik ve YBÜ", ad: "ACNS adlandırma" }, SIDES = [["L", "Sol"], ["R", "Sağ"], ["B", "İki yanlı / orta hat"]];
   function poolScenes(k) {
-    if (k === "trans") return SC.filter(function (s) { return s.grp === "ied" || (s.grp === "var" && ["v5", "v6", "v7"].indexOf(s.id) < 0); });
+    if (k === "trans") return SC.filter(function (s) { return s.grp === "ied" || s.id === "e8" || (s.grp === "var" && ["v5", "v6", "v7"].indexOf(s.id) < 0); });
     if (k === "ikt") return SC.filter(function (s) { return s.grp === "ikt" || s.id === "v5" || s.id === "v6" || s.id === "v7"; });
+    if (k === "nua") return SC.filter(function (s) { return s.grp === "nor" || s.grp === "uyk" || s.grp === "akt"; });
+    if (k === "jya") return SC.filter(function (s) { return s.grp === "jen" || s.grp === "yav" || s.grp === "art"; });
     return SC.filter(function (s) { return s.grp === "per" || s.grp === "acn"; });
   }
   function sideTruth(sc, R) { if (["v6", "v7", "i7"].indexOf(sc.id) >= 0) return "B"; return R ? "R" : "L"; }
   function quizNew() {
-    var Q = st.quiz, pool = Q.pool === "mix" ? ["trans", "trans", "ikt", "per", "ad"][Math.floor(Math.random() * 5)] : Q.pool;
+    var Q = st.quiz, pool = Q.pool === "mix" ? ["trans", "trans", "ikt", "per", "ad", "nua", "nua", "jya", "jya"][Math.floor(Math.random() * 9)] : Q.pool;
     if (pool === "ad") { adNew(); return; }
     var list = poolScenes(pool), sc;
     do { sc = list[Math.floor(Math.random() * list.length)]; } while (list.length > 1 && Q.last === sc.id); Q.last = sc.id;
     var R = Math.random() < 0.5, mix = [];
     if (pool === "trans" && Q.karma !== false) { var cand = shuffle(list.filter(function (s) { return s.id !== sc.id && s.st === sc.st && ["e3", "e8", "v12", "v13"].indexOf(s.id) < 0; })); mix = cand.slice(0, Math.random() < 0.45 ? 2 : 1); }
-    var rec = build(sc, R, 1 + Math.floor(Math.random() * 1e9), mix), opts = shuffle(list.filter(function (s) { return s.id !== sc.id; })).slice(0, 5).concat([sc]);
+    var near = pool === "nua" || pool === "jya" ? list.filter(function (s) { return s.id !== sc.id && s.grp === sc.grp && (sc.grp !== "akt" || s.id.charAt(0) === sc.id.charAt(0)); }) : [], far = list.filter(function (s) { return s.id !== sc.id && near.indexOf(s) < 0; });
+    var rec = build(sc, R, 1 + Math.floor(Math.random() * 1e9), mix), opts = shuffle(near).concat(shuffle(far)).slice(0, 5).concat([sc]); sceneSens(sc);
     opts.sort(function (a, b) { return (a.kisa || a.ad).localeCompare(b.kisa || b.ad, "tr"); });
     Q.q = { sc: sc, R: R, pool: pool, opts: opts, step: 0, ans: null, side: null, err: null };
-    st.marks = false; st.srcOn = false; st.hideMap = false; st.onEl = null; st.onTrace = null; st.mont = "lb"; st.mapMode = sc.map || "inst"; st.page = 10;
+    st.marks = false; st.srcOn = false; st.hideMap = false; st.onEl = null; st.onTrace = null; st.mont = sc.mont === "ear" ? "ear" : "lb"; st.mapMode = sc.map || "inst"; st.page = sc.page || 10;
     var pk = rec.truth.peaks || []; st.band = pool === "trans" && pk.length ? { t0: pk[0] - 0.25, t1: pk[0] + 0.55 } : null;
     setRec(rec, sc); if (pool !== "trans") { st.t0 = 0; st.cur = null; syncBar(); draw(); }
     renderQuiz();
@@ -1857,7 +2745,7 @@ button.wide { align-self: stretch; text-align: left; }
     var box = h("div", "read"), sc = q.sc, needSide = q.pool === "ikt";
     if (q.step === 0) {
       box.appendChild(h("h2", "", q.pool === "trans" ? "Çerçevedeki olay nedir?" : q.pool === "ikt" ? "Bu kayıtta ne var?" : "Bu patern nedir?"));
-      box.appendChild(h("p", "", q.pool === "ikt" ? "Kaydı baştan sona inceleyin (Oynat ya da sayfa okları), montajı değiştirin. Sonra tanıyı ve tarafı seçin." : q.pool === "trans" ? "Montaj, duyarlılık ve filtreleri kullanın; trasede bir ana dokunarak alan haritasına bakabilirsiniz." : "Gerekirse sayfa süresini uzatın."));
+      box.appendChild(h("p", "", q.pool === "ikt" ? "Kaydı baştan sona inceleyin (Oynat ya da sayfa okları), montajı değiştirin. Sonra tanıyı ve tarafı seçin." : q.pool === "trans" ? "Montaj, duyarlılık ve filtreleri kullanın; trasede bir ana dokunarak alan haritasına bakabilirsiniz." : "Kaydın tamamını gözden geçirin (" + Math.round(st.rec.dur) + " s; Oynat ya da sayfa okları). Teknisyen notları ve flaş kanalı trasede görünür."));
       var opts = h("div", "opts"); q.opts.forEach(function (o) { var b = btn(o.kisa || o.ad, function () { q.ans = o.id; if (!needSide) quizGrade(); else renderQuiz(); }); b.setAttribute("aria-pressed", q.ans === o.id ? "true" : "false"); opts.appendChild(b); }); box.appendChild(opts);
       if (needSide) { var sr = h("div", "row"), ss = h("div", "seg"); SIDES.forEach(function (s) { var b = btn(s[1], function () { q.side = s[0]; renderQuiz(); }); b.setAttribute("aria-pressed", q.side === s[0] ? "true" : "false"); ss.appendChild(b); }); sr.appendChild(h("span", "label", "Taraf")); sr.appendChild(ss); box.appendChild(sr);
         var go = btn("Yanıtla", quizGrade, "primary"); go.disabled = !(q.ans && q.side); box.appendChild(go); }
@@ -1875,12 +2763,12 @@ button.wide { align-self: stretch; text-align: left; }
     p.appendChild(box);
     p.appendChild(scoreLine());
   }
-  function scoreLine() { var s = st.store.sinav; return h("p", "note", "Puan · deşarj ve varyant: " + pct(s.trans || [0, 0]) + " · iktal: " + pct(s.ikt || [0, 0]) + " · periyodik ve YBÜ: " + pct(s.per || [0, 0]) + " · ACNS adlandırma: " + pct(s.ad || [0, 0])); }
+  function scoreLine() { var s = st.store.sinav; return h("p", "note", "Puan · deşarj ve varyant: " + pct(s.trans || [0, 0]) + " · iktal: " + pct(s.ikt || [0, 0]) + " · normal, uyku, aktivasyon: " + pct(s.nua || [0, 0]) + " · jeneralize, yavaşlama, artefakt: " + pct(s.jya || [0, 0]) + " · periyodik ve YBÜ: " + pct(s.per || [0, 0]) + " · ACNS adlandırma: " + pct(s.ad || [0, 0])); }
   // ----- ACNS naming drill: a random rhythmic or periodic pattern, named term by term
   var AD_ROWS = [["loc", "Ana terim 1", [["G", "G"], ["L", "L"], ["BI", "BI"], ["UI", "UI"], ["Mf", "Mf"]]], ["type", "Ana terim 2", [["PD", "PDs"], ["RDA", "RDA"], ["SW", "SW"]]], ["f", "Tipik frekans", [["0.5", "0,5"], ["1", "1"], ["1.5", "1,5"], ["2", "2"], ["2.5", "2,5"], ["3", ">2,5 Hz"]]],
     ["plus", "Artı", [["", "yok"], ["F", "+F"], ["R", "+R"], ["S", "+S"]]], ["evol", "Evrim", [["stat", "statik"], ["fluc", "dalgalanan"], ["evol", "evrilen"]]], ["cls", "Sınıf", [["rpp", "RPP"], ["iic", "İİS"], ["esz", "Elektrografik nöbet"]]]];
   var AD_SH = { spiky: "dikensi", sharp: "keskin", cont: "keskin konturlu", blunt: "künt" }, AD_PRED = { F: "frontal baskın", O: "oksipital baskın", M: "orta hat baskın", N: "başka türlü belirtilmemiş" };
-  function adNew() {
+  function adNew() { sceneSens({});
     var Q = st.quiz, rec = Rec(32, 1 + Math.floor(Math.random() * 1e9), "eo"), rng = rec.rng, o = acnsRandom(rng), R = rng.u() < 0.5; rec.truth = {};
     icuBg(rec); rppBuild(rec, o, R, rng); finalize(rec);
     Q.q = { pool: "ad", o: o, R: R, step: 0, sel: {} };
@@ -1938,6 +2826,7 @@ button.wide { align-self: stretch; text-align: left; }
     else if (m === "lok") lokNew(); else if (m === "sinav") quizNew();
   }
   var _open = openScene; openScene = function (sc, keep) { st.sceneAtlas = sc; st.grp = sc.grp; _open(sc, keep); };
+  (function () { var rc = el("ref-card"), hs = rc.querySelectorAll("h2"), nav = h("div", "seg tight toc"); Array.prototype.forEach.call(hs, function (x) { nav.appendChild(btn(x.textContent, function () { x.scrollIntoView({ behavior: "smooth", block: "start" }); })); }); if (hs.length) hs[0].parentNode.insertBefore(nav, hs[0]); })();
   initBar();
   Array.prototype.forEach.call(el("seg-mode").children, function (b) { b.addEventListener("click", function () { setMode(b.getAttribute("data-m")); }); });
   setMode("atlas");
