@@ -80,9 +80,10 @@ button.wide { align-self: stretch; text-align: left; }
 .lib { display: flex; gap: 6px; }
 .lib select, .lib input { font: 13.5px var(--font-body); color: var(--ink); background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 4px 8px; height: 34px; min-width: 0; }
 .lib select { flex: 1 1 62%; font-weight: 700; } .lib input { flex: 1 1 38%; }
-.pats { display: flex; flex-direction: column; max-height: 34vh; overflow-y: auto; scrollbar-width: thin; }
+.pats { display: flex; flex-direction: column; max-height: 42vh; overflow-y: auto; scrollbar-width: thin; }
 .pats .tag { margin-left: 8px; font: 500 10.5px var(--font-mono); color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
-.pats button { text-align: left; border: 0; border-left: 2px solid transparent; border-radius: 0; background: none; padding: 4px 8px; min-height: 28px; color: var(--muted); }
+.pats button { flex: 0 0 auto; height: auto; white-space: normal; line-height: 1.3; text-align: left; border: 0; border-left: 2px solid transparent; border-bottom: 1px solid var(--line); border-radius: 0; background: none; padding: 7px 8px; min-height: 32px; color: var(--muted); }
+.pats button:last-child { border-bottom: 0; }
 .pats button:hover { color: var(--ink); }
 .pats button[aria-pressed="true"] { background: none; color: var(--ink); font-weight: 700; border-left-color: var(--focus); }
 .opts { display: flex; flex-direction: column; gap: 5px; }
@@ -5192,13 +5193,20 @@ button.wide { align-self: stretch; text-align: left; }
   function quizReveal() { st.onTrace = null; st.marks = true; st.srcOn = true; st.band = null; var r = st.rec; if (r.truth.onset != null && st.quiz.q.pool === "ikt") gotoT(Math.max(0, Math.floor(r.truth.onset - 4))); syncBar(); draw(); renderQuiz(); }
 
   // ----- modes
+  // Leaving the quiz or the workshop (to look something up in the library or the reference page) must not discard the current question.
+  var SNAP = {};
+  function snapSave(mode) { var o = {}, k; for (k in st) o[k] = st[k]; SNAP[mode] = o; }
+  function snapRestore(mode) { var o = SNAP[mode], k, keep = { mode: 1, sceneAtlas: 1, grp: 1, q: 1, modern: 1, play: 1, seed: 1 }; if (!o || !o.rec) return false; for (k in o) if (!keep[k]) st[k] = o[k]; st.play = false; recompute(); syncBar(); draw(); return true; }
   function setMode(m) {
+    var prev = st.mode; if (prev === m && (m === "sinav" || m === "lok") && st.rec) return;
+    if ((prev === "sinav" || prev === "lok") && st.rec) snapSave(prev);
     st.mode = m; st.play = false;
     Array.prototype.forEach.call(el("seg-mode").children, function (b) { b.setAttribute("aria-pressed", b.getAttribute("data-m") === m ? "true" : "false"); });
     el("work").hidden = m === "ref"; el("ref-card").hidden = m !== "ref"; el("foot").hidden = m === "ref";
     st.pick = null; st.good = null; st.userMark = null;
     if (m === "atlas") openScene(st.scene && st.mode === "atlas" && st.sceneAtlas ? st.sceneAtlas : (st.sceneAtlas || SC[0]), false);
-    else if (m === "lok") lokNew(); else if (m === "sinav") quizNew();
+    else if (m === "lok") { if (snapRestore("lok")) renderLok(); else lokNew(); }
+    else if (m === "sinav") { if (snapRestore("sinav")) renderQuiz(); else quizNew(); }
   }
   var _open = openScene; openScene = function (sc, keep) { st.sceneAtlas = sc; st.grp = sc.grp; _open(sc, keep); };
   (function () { var rc = el("ref-card"), hs = rc.querySelectorAll("h2"), nav = h("div", "seg tight toc"); Array.prototype.forEach.call(hs, function (x) { nav.appendChild(btn(x.textContent, function () { x.scrollIntoView({ behavior: "smooth", block: "start" }); })); }); if (hs.length) hs[0].parentNode.insertBefore(nav, hs[0]); })();
