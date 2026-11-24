@@ -4992,7 +4992,9 @@ button.wide { align-self: stretch; text-align: left; }
     setRec(build(sc, st.R, st.seed), sc); renderAtlas();
   }
   function renderAtlas() {
-    var p = el("panel"), sc = st.scene; p.innerHTML = "";
+    var p = el("panel"), sc = st.scene, oldList = p.querySelector(".pats"), key = st.grp + "|" + (st.q || ""), keepTop = oldList && st.listKey === key ? oldList.scrollTop : null, scr = [], nd = p;
+    while (nd && nd !== document.body) { if (nd.scrollTop) scr.push([nd, nd.scrollTop]); nd = nd.parentNode; }      // re-rendering must not move the page or the list
+    p.innerHTML = ""; st.listKey = key;
     var lib = h("div", "lib"), sel = h("select", ""), q = h("input", ""), list = h("div", "pats");
     sel.id = "grp-sel"; sel.setAttribute("aria-label", "Kütüphane bölümü"); GRP.forEach(function (g) { var n = SC.filter(function (s) { return s.grp === g[0]; }).length; if (!n) return; var o = document.createElement("option"); o.value = g[0]; o.textContent = g[1] + " (" + n + ")"; sel.appendChild(o); }); sel.value = st.grp;
     sel.addEventListener("change", function () { st.grp = sel.value; st.q = ""; openScene(SC.filter(function (s) { return s.grp === sel.value; })[0]); });
@@ -5004,6 +5006,8 @@ button.wide { align-self: stretch; text-align: left; }
     }
     q.addEventListener("input", function () { st.q = q.value; fill(); }); fill();
     lib.appendChild(sel); lib.appendChild(q); p.appendChild(lib); p.appendChild(list);
+    var showCur = function () { var cur = list.querySelector('[aria-pressed="true"]'); if (keepTop != null) list.scrollTop = keepTop; if (!cur) return; var top = cur.offsetTop - list.offsetTop; if (top < list.scrollTop) list.scrollTop = top; else if (top + cur.offsetHeight > list.scrollTop + list.clientHeight) list.scrollTop = top + cur.offsetHeight - list.clientHeight; };
+    showCur(); setTimeout(function () { showCur(); scr.forEach(function (x) { x[0].scrollTop = x[1]; }); }, 0);
     if (!sc) return;
     var row = h("div", "row"), sd = h("div", "seg"); [["Sol", false], ["Sağ", true]].forEach(function (o) { var b = btn(o[0], function () { st.R = o[1]; openScene(sc, true); }); b.setAttribute("aria-pressed", st.R === o[1] ? "true" : "false"); sd.appendChild(b); });
     if (sc.yan !== false) { row.appendChild(h("span", "label", "Taraf")); row.appendChild(sd); } row.appendChild(btn("Yeni örnek üret", function () { st.R = Math.random() < 0.5; openScene(sc); })); p.appendChild(row);
